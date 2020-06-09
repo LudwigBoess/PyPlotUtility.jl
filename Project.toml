@@ -1,0 +1,4 @@
+name = "PyPlotUtility"
+uuid = "2372c442-b35b-4f55-9072-8f560a2e4af6"
+authors = ["LudwigBoess <lboess@usm.lmu.de>"]
+version = "0.1.0"

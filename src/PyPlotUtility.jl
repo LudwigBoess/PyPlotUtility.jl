@@ -2,7 +2,9 @@ module PyPlotUtility
 
 using PyCall
 
-export axis_ticks_styling!, get_gs 
+export axis_ticks_styling!, get_gs,
+       linestyle, ls
+
 
 function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, tick_label_size::Int64=15, color::String="k")
 
@@ -32,6 +34,48 @@ function get_gs(gs::PyObject, row::Int64, col::Int64)
     else
         return get(gs, (row, col))
     end
+end
+
+
+function linestyle(sequence::String="";
+                   dash::Float64=3.7, dot::Float64=1.0, space::Float64=3.7,
+                   buffer::Bool=false, offset::Int64=0)
+
+
+    if ( count(i-> (i=='.'), sequence) > 0 ) || ( count(i-> (i==':'), sequence) > 0)
+        dash = 6.4
+    end
+
+    if (sequence == "" || sequence == "-" || sequence == "_")
+        return (offset, [ dash ])
+    elseif sequence == ":"
+        return (offset, [dot, space, dot, space, dot, space] )
+    else
+        reftype = Dict( '-' => [  dash, space ],
+                        '_' => [ 2dash, space ],
+                        '.' => [   dot, space ],
+                        ':' => [   dot, space, dot, space, dot, space ] )
+
+        onoffseq = Vector{Float64}(undef, 0)
+
+        for c ∈ sequence
+            onoffseq = [onoffseq; reftype[c]]
+        end
+
+        if buffer
+            onoffseq[end] = 1.0
+        end
+
+        return (offset, onoffseq)
+    end
+
+end
+
+function ls(sequence::String="";
+            dash::Float64=3.7, dot::Float64=1.0, space::Float64=3.7,
+            buffer::Bool=false, offset::Int64=0)
+
+    return linestyle(sequence, dash=dash, dot=dot, space=space, buffer=buffer, offset=offset)
 end
 
 end # module

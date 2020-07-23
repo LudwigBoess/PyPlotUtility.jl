@@ -23,7 +23,7 @@ function slice(rng::UnitRange)
 end
 
 
-function get_gs(gs::PyObject, row::Int64, col::Int64)
+function get_gs(gs::PyObject, row, col)
 
     if (typeof(row) <: UnitRange && typeof(col) <: UnitRange )
         return get(gs, (slice(row), slice(col)))

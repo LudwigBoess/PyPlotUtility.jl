@@ -1,6 +1,7 @@
 module PyPlotUtility
 
 using PyCall
+using PyPlot
 
 export axis_ticks_styling!, get_gs,
        linestyle, ls,

@@ -2,13 +2,15 @@ module PyPlotUtility
 
     using PyCall
     using PyPlot
-    axes_divider = pyimport("mpl_toolkits.axes_grid1.axes_divider")
+    using SPHtoGrid
+    
 
     export axis_ticks_styling!, get_gs,
         linestyle, ls,
         get_imshow, get_imshow_log,
         get_colorbar_top,
-        shift_colorbar_label
+        shift_colorbar_label!,
+        get_streamlines
 
 
     function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, tick_label_size::Int64=15, color::String="k")
@@ -148,12 +150,36 @@ module PyPlotUtility
         return im
     end
 
+    function get_streamlines( ax::PyCall.PyObject, 
+                              image_x::Array{<:Real}, image_y::Array{<:Real}, 
+                              par::mappingParameters;
+                              scale::Real=1.0, density::Real=2.0, color::String="grey")
+
+        ax.set_xlim(scale .* par.x_lim)
+        ax.set_ylim(scale .* par.y_lim)
+    
+        x_grid, y_grid = get_map_grid_2D(par)
+
+        x_grid .*= scale
+        y_grid .*= scale
+
+        stream = ax.streamplot( x_grid, y_grid,
+                                image_x, image_y, 
+                                density = density, 
+                                color = color
+                              )
+
+        return stream
+    end
+
 
     function get_colorbar_top(ax::PyCall.PyObject, im::PyCall.PyObject, 
                               label::AbstractString, 
                               axis_label_font_size::Integer, 
                               tick_label_size::Integer)
 
+        axes_divider = pyimport("mpl_toolkits.axes_grid1.axes_divider")
+        
         ax_divider = axes_divider.make_axes_locatable(ax)
         cax = ax_divider.append_axes("top", size="7%", pad="2%")
         cb = colorbar(im, cax=cax, orientation="horizontal")#, fraction=0.046, pad=0.5)#, cax=cbaxis1)

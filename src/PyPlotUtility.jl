@@ -7,6 +7,7 @@ module PyPlotUtility
 
     export axis_ticks_styling!, get_gs,
         linestyle, ls,
+        pixel_size,
         get_imshow, get_imshow_log,
         get_colorbar_top,
         shift_colorbar_label!,
@@ -88,6 +89,10 @@ module PyPlotUtility
                 buffer::Bool=false, offset::Int64=0)
 
         return linestyle(sequence, dash=dash, dot=dot, space=space, buffer=buffer, offset=offset)
+    end
+
+    function pixel_size(fig::Figure)
+        (72.0/fig.dpi)*(72.0/fig.dpi)
     end
 
 

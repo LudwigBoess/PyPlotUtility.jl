@@ -7,4 +7,6 @@ version = "0.1.0"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SPHtoGrid = "8a806948-229a-4117-b79b-c12ac366026f"
-TriangularShapedCloudInterpolation = "51f55a63-7ec5-4b6d-a5a9-9bbf03ec1f62"
+
+[compat]
+SPHtoGrid = "0.2"

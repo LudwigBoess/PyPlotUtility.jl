@@ -11,16 +11,18 @@ module PyPlotUtility
         get_imshow, get_imshow_log,
         get_colorbar_top,
         shift_colorbar_label!,
-        get_streamlines,
-        pixel_size
+        get_streamlines
 
-
-    function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, tick_label_size::Int64=15, color::String="k")
+    function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, 
+                                 width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
+                                 tick_label_size::Int64=15, color::String="k")
 
         ax.tick_params(reset=true, direction="in", axis="both", labelsize=tick_label_size,
-                        which="major", size=size_minor_ticks<<1, width=1, color=color)
+                        which="major", size=size_minor_ticks<<1, 
+                        width=major_tick_width_scale*width_minor_ticks, color=color)
+
         ax.tick_params(reset=true, direction="in", axis="both", labelsize=tick_label_size,
-                        which="minor", size=size_minor_ticks, width=1, color=color)
+                        which="minor", size=size_minor_ticks, width=width_minor_ticks, color=color)
 
         ax.minorticks_on()
 
@@ -55,6 +57,9 @@ module PyPlotUtility
                     buffer::Bool=false, offset::Int64=0)
 
 
+        if sequence == "-"
+            return sequence
+        end
         if ( count(i-> (i=='.'), sequence) > 0 ) || ( count(i-> (i==':'), sequence) > 0)
             dash = 6.4
         end
@@ -89,10 +94,6 @@ module PyPlotUtility
                 buffer::Bool=false, offset::Int64=0)
 
         return linestyle(sequence, dash=dash, dot=dot, space=space, buffer=buffer, offset=offset)
-    end
-
-    function pixel_size(fig::Figure)
-        (72.0/fig.dpi)*(72.0/fig.dpi)
     end
 
 

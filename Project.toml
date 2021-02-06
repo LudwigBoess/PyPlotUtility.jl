@@ -9,4 +9,4 @@ PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SPHtoGrid = "8a806948-229a-4117-b79b-c12ac366026f"
 
 [compat]
-SPHtoGrid = "0.2"
+SPHtoGrid = "0.3"

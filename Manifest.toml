@@ -261,11 +261,11 @@ version = "1.3.0"
 
 [[SPHtoGrid]]
 deps = ["DelimitedFiles", "Distributed", "Documenter", "DocumenterTools", "FITSIO", "LinearAlgebra", "Printf", "ProgressMeter", "SPHKernels", "SpecialFunctions", "Test", "TriangularShapedCloudInterpolation", "Unitful"]
-git-tree-sha1 = "670f70cd5666d8eccb07f6a2b82a24984f656821"
+git-tree-sha1 = "1a8abbe4f586f6360d83754897a482d762334ee3"
 repo-rev = "master"
 repo-url = "https://github.com/LudwigBoess/SPHtoGrid.jl.git"
 uuid = "8a806948-229a-4117-b79b-c12ac366026f"
-version = "0.2.5"
+version = "0.3.0"
 
 [[Sass]]
 deps = ["BinaryProvider", "Libdl", "Test"]
@@ -315,9 +315,9 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[TriangularShapedCloudInterpolation]]
 deps = ["Documenter", "DocumenterTools", "Test"]
-git-tree-sha1 = "20c7b7b392a136ee10be73d0ccd0c6ad3e9795fd"
+git-tree-sha1 = "aa4d587649f2b9f6974a2d14022df5e298820796"
 uuid = "51f55a63-7ec5-4b6d-a5a9-9bbf03ec1f62"
-version = "0.1.0"
+version = "0.2.0"
 
 [[UUIDs]]
 deps = ["Random", "SHA"]

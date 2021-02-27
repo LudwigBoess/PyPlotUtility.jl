@@ -4,6 +4,7 @@ authors = ["LudwigBoess <lboess@usm.lmu.de>"]
 version = "0.1.0"
 
 [deps]
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SPHtoGrid = "8a806948-229a-4117-b79b-c12ac366026f"

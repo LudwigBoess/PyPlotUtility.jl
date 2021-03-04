@@ -22,24 +22,12 @@ module PyPlotUtility
         linestyle, ls,
         pixel_size,
         get_imshow, get_imshow_log,
+        get_pcolormesh, get_pcolormesh_log,
         get_colorbar_top,
+        get_colorbar_left,
+        get_colorbar_right,
         shift_colorbar_label!,
         get_streamlines,
         bin_2D_log, bin_2D_log!, bin_2D_quantity_log!
-
-    
-
-    
-
-
-    
-
-    
-
-
-    
-
-    
-
 
 end # module

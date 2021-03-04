@@ -3,7 +3,9 @@
     get_imshow(ax::PyCall.PyObject, image::Array{<:Real}, 
                     x_lim::Array{<:Real}=zeros(2), y_lim::Array{<:Real}=zeros(2), 
                     vmin::Real=0.0, vmax::Real=0.0; 
-                    cmap::String="viridis", ticks_color::String="white")
+                    cmap::String="viridis", cnorm=matplotlib.colors.NoNorm(),
+                    ticks_color::String="white",
+                    interpolation::String="none")
 
 Helper function to plot an `imshow` with linear colorbar.
 """
@@ -46,7 +48,9 @@ end
     get_imshow_log(ax::PyCall.PyObject, image::Array{<:Real}, 
                    x_lim::Array{<:Real}=zeros(2), y_lim::Array{<:Real}=zeros(2), 
                    vmin::Real=0.0, vmax::Real=0.0; 
-                   cmap::String="viridis", ticks_color::String="white")
+                   cmap::String="viridis",
+                    ticks_color::String="white",
+                    interpolation::String="none")
 
 Helper function to plot an `imshow` with logarithmic colorbar.
 """

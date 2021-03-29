@@ -106,10 +106,7 @@ function bin_2D_log!(phase_map_count,
 
         if (1 <= x_bin <= Nbins) && (1 <= y_bin <= Nbins)
             
-            phase_map_count[y_bin, x_bin] += 1
-
-            phase_map[y_bin, x_bin] += bin_q[i]
-            
+            phase_map_count[y_bin, x_bin] += 1            
         end
 
         # update progress meter
@@ -119,7 +116,7 @@ function bin_2D_log!(phase_map_count,
         end
     end
 
-    return phase_map_count, phase_map
+    return phase_map_count
 
 end
 

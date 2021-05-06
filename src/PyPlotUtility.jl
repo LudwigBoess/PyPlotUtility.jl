@@ -28,6 +28,7 @@ module PyPlotUtility
         get_colorbar_right,
         shift_colorbar_label!,
         get_streamlines,
-        bin_2D_log, bin_2D_log!, bin_2D_quantity_log!
+        bin_2D_log, bin_2D_log!, bin_2D_quantity!, bin_2D_quantity_log!,
+        propaganda_plot_columns
 
 end # module

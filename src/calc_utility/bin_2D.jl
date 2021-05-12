@@ -116,10 +116,10 @@ end
 
 
 """
-    bin_2D_quantity_log!( phase_map_count, phase_map, 
-                          x_q, y_q, bin_q, x_lim, y_lim; 
-                          Nbins::Int=100,
-                          show_progress::Bool=true)
+    bin_2D_quantity!( phase_map_count, phase_map, 
+                      x_q, y_q, bin_q, x_lim, y_lim; 
+                      Nbins::Int=100,
+                      show_progress::Bool=true )
 
 Get a 2D histogram of `x_q` and `y_q` in the limits `x_lim`, `y_lim` over a number of bins `Nbins` for pre-allocated arrays `phase_map_count` and `phase_map`.
 Should be used if computing a 2D phase map over multiple files.
@@ -140,8 +140,8 @@ function bin_2D_quantity!(phase_map_count, phase_map,
 
     @inbounds for i = 1:size(x_q,1)
 
-        x_bin = 1 + floor( Int64, (log10(x_q[i]) - log10(x_lim[1]))/dlogx )
-        y_bin = 1 + floor( Int64, (log10(y_q[i]) - log10(y_lim[1]))/dlogy )
+        x_bin = 1 + floor( Int64, ( x_q[i] -  x_lim[1])/dx )
+        y_bin = 1 + floor( Int64, ( y_q[i] -  y_lim[1])/dy )
 
         if (1 <= x_bin <= Nbins) && (1 <= y_bin <= Nbins)
             
@@ -161,6 +161,7 @@ function bin_2D_quantity!(phase_map_count, phase_map,
     return phase_map_count, phase_map
 
 end
+
 
 
 

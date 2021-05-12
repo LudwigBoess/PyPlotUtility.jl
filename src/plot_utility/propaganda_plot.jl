@@ -1,6 +1,3 @@
-using PyCall
-using ImageFiltering
-using SPHtoGrid
 
 function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, text_offset, fontsize=15)
 
@@ -61,7 +58,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 contours=falses(Ncols),                     
                                 contour_levels=nothing,
                                 smooth_contour_col=falses(Ncols),
-                                mask_bad=falses(Ncols),
+                                mask_bad=trues(Ncols),
                                 bad_colors=["k" for _ in 1:Ncols],
                                 annotate_time=falses(Nrows),
                                 time_labels=nothing,
@@ -69,7 +66,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 scale_label=L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc=1000.0,
                                 r_circle=0.0,
-                                shift_colorbar_labels_inward=falses(Ncols),
+                                shift_colorbar_labels_inward=trues(Ncols),
                                 upscale=2.0,
                                 scale_pixel_offset=75.0,
                                 scale_text_pixel_offset=125.0

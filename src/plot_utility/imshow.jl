@@ -31,9 +31,9 @@ function get_imshow(ax::PyCall.PyObject, image::Array{<:Real},
                     cmap = cmap,
                     origin="lower",
                     extent= [x_lim[1],
-                            x_lim[2],
-                            y_lim[1],
-                            y_lim[2]],
+                             x_lim[2],
+                             y_lim[1],
+                             y_lim[2]],
                     interpolation=interpolation
                         )
 
@@ -43,6 +43,7 @@ function get_imshow(ax::PyCall.PyObject, image::Array{<:Real},
 
     return im
 end
+
 
 """
     get_imshow_log(ax::PyCall.PyObject, image::Array{<:Real}, 

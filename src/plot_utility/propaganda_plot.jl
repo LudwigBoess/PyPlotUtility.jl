@@ -69,7 +69,8 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 shift_colorbar_labels_inward=trues(Ncols),
                                 upscale=2.0,
                                 scale_pixel_offset=75.0,
-                                scale_text_pixel_offset=125.0
+                                scale_text_pixel_offset=125.0,
+								read_mode=1
                                 )
 
     axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
@@ -103,7 +104,22 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 			ax = grid[(col-1)*Nrows+i]
 
 			image_name = files[Nfile]
-			map, par, snap_num, units = read_fits_image(image_name)
+
+			# read SPHtoGrid image
+			if read_mode == 1
+				map, par, snap_num, units = read_fits_image(image_name)
+
+			# read Smac1 binary image
+			elseif read_mode == 2
+				map = read_smac1_binary_image(image_name)
+				smac1_info = read_smac1_binary_info(image_name)
+				smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
+				par = mappingParameters(center=smac1_center, 
+										x_size=smac1_info.boxsize_kpc,
+										y_size=smac1_info.boxsize_kpc,
+										z_size=smac1_info.boxsize_kpc,
+										Npixels=smac1_info.boxsize_pix)
+			end
 
 
 			if smooth_col[col]

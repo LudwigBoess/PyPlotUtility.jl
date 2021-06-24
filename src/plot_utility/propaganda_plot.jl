@@ -67,10 +67,11 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 scale_kpc=1000.0,
                                 r_circle=0.0,
                                 shift_colorbar_labels_inward=trues(Ncols),
-                                upscale=2.0,
+                                upscale=Ncols+0.5,
                                 scale_pixel_offset=75.0,
                                 scale_text_pixel_offset=125.0,
-								read_mode=1
+								read_mode=1,
+								image_num=ones(Int64,Ncols)
                                 )
 
     axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
@@ -119,6 +120,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 										y_size=smac1_info.boxsize_kpc,
 										z_size=smac1_info.boxsize_kpc,
 										Npixels=smac1_info.boxsize_pix)
+
+			elseif read_mode == 3
+				map = read_smac2_image(image_name, image_num[Nfile])
+				par = read_smac2_info(image_name)
 			end
 
 
@@ -150,13 +155,37 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
 			if contours[col]
 				image_name = contour_files[Nfile]
-				map, par, snap_num, units = read_fits_image(image_name)
+				
+				if read_mode == 1
+					map, par, snap_num, units = read_fits_image(image_name)
+
+				# read Smac1 binary image
+				elseif read_mode == 2
+					map = read_smac1_binary_image(image_name)
+					smac1_info = read_smac1_binary_info(image_name)
+					smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
+					par = mappingParameters(center=smac1_center, 
+											x_size=smac1_info.boxsize_kpc,
+											y_size=smac1_info.boxsize_kpc,
+											z_size=smac1_info.boxsize_kpc,
+											Npixels=smac1_info.boxsize_pix)
+
+				elseif read_mode == 3
+
+					map = read_smac2_image(image_name, image_num[Nfile])
+					par = read_smac2_info(image_name)
+
+				end
 
 				if smooth_contour_col[col]
 					map = imfilter(map, Kernel.gaussian(3))
 				end
 
-				ax.contour(map, contour_levels, colors="white", linewidth=1.2, linestyle="--", alpha=0.8)
+				if isnothing(contour_levels)
+					ax.contour(map, colors="white", linewidth=1.2, linestyle="--", alpha=0.8)
+				else
+					ax.contour(map, contour_levels, colors="white", linewidth=1.2, linestyle="--", alpha=0.8)
+				end
 
                 Ncontour += 1
 			end

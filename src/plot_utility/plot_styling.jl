@@ -8,7 +8,7 @@ using PyPlot
 
 LMB default axis tick styling.
 """
-function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, 
+function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3, 
                              width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
                              tick_label_size::Int64=15, color::String="k")
 

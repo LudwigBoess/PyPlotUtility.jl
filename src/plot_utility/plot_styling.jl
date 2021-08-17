@@ -21,8 +21,41 @@ function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3,
 
     ax.minorticks_on()
 
+    for spine in values(ax.spines)
+        spine.set_edgecolor(color)
+    end
+
+    return ax
+
+end
+
+"""
+    cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, 
+                        width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
+                        tick_label_size::Int64=15, color::String="k")
+
+LMB default axis tick styling.
+"""
+function cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3, 
+                             width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
+                             tick_label_size::Int64=15, color::String="k")
+
+    ax.tick_params( direction="in", labelsize=tick_label_size,
+                    which="major", size=size_minor_ticks<<1, 
+                    width=major_tick_width_scale*width_minor_ticks, color=color)
+
+    ax.tick_params( direction="in", labelsize=tick_label_size,
+                    which="minor", size=size_minor_ticks, width=width_minor_ticks, color=color)
+
+    ax.minorticks_on()
+
+    for spine in values(ax.spines)
+        spine.set_edgecolor(color)
+    end
+
     return ax
 end
+
 
 """
     pixel_size(fig::Figure)

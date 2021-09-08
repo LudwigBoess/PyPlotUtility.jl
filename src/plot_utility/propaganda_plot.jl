@@ -52,16 +52,18 @@ end
 function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                                 log_map=trues(Ncols),
                                 smooth_col=falses(Ncols),
+								smooth_size=0.0,
                                 streamline_files=nothing,
                                 streamlines=falses(Ncols),
                                 contour_files=nothing,
-                                contours=falses(Ncols),                     
+                                contours=falses(Ncols),
                                 contour_levels=nothing,
                                 smooth_contour_col=falses(Ncols),
                                 mask_bad=trues(Ncols),
                                 bad_colors=["k" for _ in 1:Ncols],
                                 annotate_time=falses(Nrows),
                                 time_labels=nothing,
+								time_direction="row",
                                 annotate_scale=trues(Nrows),
                                 scale_label=L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc=1000.0,
@@ -126,9 +128,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 				par = read_smac2_info(image_name)
 			end
 
-
 			if smooth_col[col]
-				map = imfilter(map, Kernel.gaussian(3))
+				pixelSideLength = (par.x_lim[2] - par.x_lim[1])/par.Npixels[1]
+				smooth_size /= pixelSideLength * 10.0
+				map = imfilter(map, Kernel.gaussian(smooth_size))
 			end
 
 			if mask_bad[col]
@@ -224,9 +227,9 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 						scale_label, scale_text_pixel_offset)
 				end
 
-				if annotate_time[i]
+				if annotate_time[Nfile] && time_direction == "row"
 					time_annotation(ax, 1.0, par.Npixels[1], 300.0/4.0, 
-									  time_labels[i])
+									  time_labels[Nfile])
 				end
 
 				
@@ -254,12 +257,18 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 									labelsize=tick_label_size,
 									size=3, width=1
 									)
+
 				grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
 				grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
 
 				if shift_colorbar_labels_inward[col]
 					shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "left")
 					shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
+				end
+
+				if annotate_time[Nfile] && time_direction == "col"
+					time_annotation(ax, 1.0, par.Npixels[1], 300.0/4.0, 
+										time_labels[Nfile])
 				end
 			end
 

@@ -20,7 +20,8 @@ module PyPlotUtility
     include(joinpath("plot_utility", "streamlines.jl"))
     include(joinpath("plot_utility", "propaganda_plot.jl"))
 
-    export  axis_ticks_styling!, cb_ticks_styling!, 
+    export  axis_ticks_styling!, cb_ticks_styling!, plot_styling!,
+            get_figure,
             get_gs,
             linestyle, ls,
             pixel_size,

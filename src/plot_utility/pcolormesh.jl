@@ -18,8 +18,8 @@ function get_pcolormesh_log(map, x_lim, y_lim, c_lim=nothing;
                             set_bad::Bool=true, bad_color::String="white")
 
     # reconstruct corner point for pcolormesh
-    X = 10.0.^LinRange(log10(x_lim[1]), log10(x_lim[2]), size(map,1))
-    Y = 10.0.^LinRange(log10(y_lim[1]), log10(y_lim[2]), size(map,2))
+    X = 10.0.^LinRange(log10(x_lim[1]), log10(x_lim[2]), size(map,2))
+    Y = 10.0.^LinRange(log10(y_lim[1]), log10(y_lim[2]), size(map,1))
 
     if set_bad
         # get colormap object
@@ -61,8 +61,8 @@ function get_pcolormesh(map, x_lim, y_lim, c_lim=nothing;
                         set_bad::Bool=true, bad_color::String="white")
 
     # reconstruct corner point for pcolormesh
-    X = LinRange(x_lim[1], x_lim[2], size(map,1))
-    Y = LinRange(y_lim[1], y_lim[2], size(map,2))
+    X = LinRange(x_lim[1], x_lim[2], size(map,2))
+    Y = LinRange(y_lim[1], y_lim[2], size(map,1))
 
     if set_bad
         # get colormap object

@@ -11,8 +11,8 @@ Returns a colorbar at the top of an plot.
 """
 function get_colorbar_top(ax::PyCall.PyObject, im::PyCall.PyObject, 
                             label::AbstractString, 
-                            axis_label_font_size::Integer, 
-                            tick_label_size::Integer)
+                            axis_label_font_size::Integer=16, 
+                            tick_label_size::Integer=15)
 
     axes_divider = pyimport("mpl_toolkits.axes_grid1.axes_divider")
     

@@ -59,6 +59,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 contours=falses(Ncols),
                                 contour_levels=nothing,
                                 smooth_contour_col=falses(Ncols),
+								alpha_contours=ones(Ncols),
                                 mask_bad=trues(Ncols),
                                 bad_colors=["k" for _ in 1:Ncols],
                                 annotate_time=falses(Nrows),
@@ -67,7 +68,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 annotate_scale=trues(Nrows),
                                 scale_label=L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc=1000.0,
-                                r_circle=0.0,
+                                r_circles=[0.0, 0.0],
                                 shift_colorbar_labels_inward=trues(Ncols),
                                 upscale=Ncols+0.5,
                                 scale_pixel_offset=75.0,
@@ -130,8 +131,8 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
 			if smooth_col[col]
 				pixelSideLength = (par.x_lim[2] - par.x_lim[1])/par.Npixels[1]
-				smooth_size /= pixelSideLength * 10.0
-				map = imfilter(map, Kernel.gaussian(smooth_size))
+				smooth_pixel =  smooth_size .* pixelSideLength
+				map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1]-1,par.Npixels[1]-1))))
 			end
 
 			if mask_bad[col]
@@ -181,13 +182,17 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 				end
 
 				if smooth_contour_col[col]
-					map = imfilter(map, Kernel.gaussian(3))
+					#println("smooth size = $smooth_size kpc")
+					pixelSideLength = (par.x_lim[2] - par.x_lim[1])/par.Npixels[1]
+					smooth_pixel =  smooth_size .* pixelSideLength
+					#println("smooth size = $smooth_size pix")
+					map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1]-1,par.Npixels[1]-1))))
 				end
 
 				if isnothing(contour_levels)
-					ax.contour(map, colors="white", linewidth=1.2, linestyle="--", alpha=0.8)
+					ax.contour(map, colors="white", linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
 				else
-					ax.contour(map, contour_levels, colors="white", linewidth=1.2, linestyle="--", alpha=0.8)
+					ax.contour(map, contour_levels, colors="white", linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
 				end
 
                 Ncontour += 1
@@ -236,9 +241,17 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 			end
 
 			pixelSideLength = (par.x_lim[2] - par.x_lim[1])/par.Npixels[1]
-			ax.add_artist(plt.Circle( (0.5par.Npixels[1], 0.5par.Npixels[2]), r_circle/pixelSideLength, 
-								color="w", fill=false, ls="--"))
 
+			for r_circle ∈ r_circles
+				ax.add_artist(plt.Circle( (0.5par.Npixels[1], 0.5par.Npixels[2]), r_circle/pixelSideLength, 
+									color="w", fill=false, ls="--"))
+			end
+
+			# draw smoothing beam
+			if smooth_col[col] || smooth_contour_col[col]
+				ax.add_artist(matplotlib.patches.Ellipse( (0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2], 
+									color="w", fill=true, ls="-"))
+			end
 			
 			ax.set_axis_off()
 

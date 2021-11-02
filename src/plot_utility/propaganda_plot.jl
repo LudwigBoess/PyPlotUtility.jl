@@ -1,3 +1,5 @@
+#using PyCall 
+
 
 function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, text_offset, fontsize=15)
 
@@ -50,7 +52,11 @@ end
 # Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
 # """
 function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
+								map_arr=nothing, par_arr=nothing,
+								contour_arr=nothing, contour_par_arr=nothing,
                                 log_map=trues(Ncols),
+								colorbar_bottom=false,
+								colorbar_single=false,
                                 smooth_col=falses(Ncols),
 								smooth_size=0.0,
                                 streamline_files=nothing,
@@ -58,8 +64,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 contour_files=nothing,
                                 contours=falses(Ncols),
                                 contour_levels=nothing,
+								contour_color="white",
                                 smooth_contour_col=falses(Ncols),
 								alpha_contours=ones(Ncols),
+								cutoffs=nothing,
                                 mask_bad=trues(Ncols),
                                 bad_colors=["k" for _ in 1:Ncols],
                                 annotate_time=falses(Nrows),
@@ -109,24 +117,29 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
 			image_name = files[Nfile]
 
-			# read SPHtoGrid image
-			if read_mode == 1
-				map, par, snap_num, units = read_fits_image(image_name)
+			if isnothing(map_arr)
+				# read SPHtoGrid image
+				if read_mode == 1
+					map, par, snap_num, units = read_fits_image(image_name)
 
-			# read Smac1 binary image
-			elseif read_mode == 2
-				map = read_smac1_binary_image(image_name)
-				smac1_info = read_smac1_binary_info(image_name)
-				smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
-				par = mappingParameters(center=smac1_center, 
-										x_size=smac1_info.boxsize_kpc,
-										y_size=smac1_info.boxsize_kpc,
-										z_size=smac1_info.boxsize_kpc,
-										Npixels=smac1_info.boxsize_pix)
+				# read Smac1 binary image
+				elseif read_mode == 2
+					map = read_smac1_binary_image(image_name)
+					smac1_info = read_smac1_binary_info(image_name)
+					smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
+					par = mappingParameters(center=smac1_center, 
+											x_size=smac1_info.boxsize_kpc,
+											y_size=smac1_info.boxsize_kpc,
+											z_size=smac1_info.boxsize_kpc,
+											Npixels=smac1_info.boxsize_pix)
 
-			elseif read_mode == 3
-				map = read_smac2_image(image_name, image_num[Nfile])
-				par = read_smac2_info(image_name)
+				elseif read_mode == 3
+					map = read_smac2_image(image_name, image_num[Nfile])
+					par = read_smac2_info(image_name)
+				end
+			else
+				map = map_arr[Nfile]
+				par = par_arr[Nfile]
 			end
 
 			if smooth_col[col]
@@ -135,6 +148,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 				map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1]-1,par.Npixels[1]-1))))
 			end
 
+			if !isnothing(cutoffs)
+				map[ map .< cutoffs[Nfile]] .= NaN
+			end
+			
 			if mask_bad[col]
 				# get colormap object
 				cmap = plt.get_cmap(im_cmap[col])
@@ -160,25 +177,30 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 			if contours[col]
 				image_name = contour_files[Nfile]
 				
-				if read_mode == 1
-					map, par, snap_num, units = read_fits_image(image_name)
+				if isnothing(contour_arr)
+					if read_mode == 1
+						map, par, snap_num, units = read_fits_image(image_name)
 
-				# read Smac1 binary image
-				elseif read_mode == 2
-					map = read_smac1_binary_image(image_name)
-					smac1_info = read_smac1_binary_info(image_name)
-					smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
-					par = mappingParameters(center=smac1_center, 
-											x_size=smac1_info.boxsize_kpc,
-											y_size=smac1_info.boxsize_kpc,
-											z_size=smac1_info.boxsize_kpc,
-											Npixels=smac1_info.boxsize_pix)
+					# read Smac1 binary image
+					elseif read_mode == 2
+						map = read_smac1_binary_image(image_name)
+						smac1_info = read_smac1_binary_info(image_name)
+						smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
+						par = mappingParameters(center=smac1_center, 
+												x_size=smac1_info.boxsize_kpc,
+												y_size=smac1_info.boxsize_kpc,
+												z_size=smac1_info.boxsize_kpc,
+												Npixels=smac1_info.boxsize_pix)
 
-				elseif read_mode == 3
+					elseif read_mode == 3
 
-					map = read_smac2_image(image_name, image_num[Nfile])
-					par = read_smac2_info(image_name)
+						map = read_smac2_image(image_name, image_num[Nfile])
+						par = read_smac2_info(image_name)
 
+					end
+				else
+					map = contour_arr[Nfile]
+					par = contour_par_arr[Nfile]
 				end
 
 				if smooth_contour_col[col]
@@ -190,9 +212,9 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 				end
 
 				if isnothing(contour_levels)
-					ax.contour(map, colors="white", linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
+					ax.contour(map, colors=contour_color, linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
 				else
-					ax.contour(map, contour_levels, colors="white", linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
+					ax.contour(map, contour_levels, colors=contour_color, linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
 				end
 
                 Ncontour += 1
@@ -228,12 +250,16 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 					# annotate_scale(ax, par.Npixels[1], 1.0, 300.0/4.0, 1000.0/pixelSideLength, 
 					# 	L"1 \: h^{-1} c" * "Mpc", 500.0/4.0)
 
-					scale_annotation(ax, par.Npixels[1], 1.0, scale_pixel_offset, scale_kpc/pixelSideLength, 0.1,
-						scale_label, scale_text_pixel_offset)
+					scale_annotation(ax, par.Npixels[1], 1.0, par.Npixels[1]/14, #scale_pixel_offset, 
+							scale_kpc/pixelSideLength, 0.1,
+						scale_label, 
+						par.Npixels[1]/8
+						#scale_text_pixel_offset
+						)
 				end
 
 				if annotate_time[Nfile] && time_direction == "row"
-					time_annotation(ax, 1.0, par.Npixels[1], 300.0/4.0, 
+					time_annotation(ax, 1.0, par.Npixels[1], 0.075*par.Npixels[1], 
 									  time_labels[Nfile])
 				end
 
@@ -255,8 +281,18 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 			
 			ax.set_axis_off()
 
-			if i == 1
-				cb = colorbar(im, cax=grid[(col-1)*Nrows+1].cax, orientation="horizontal")
+			if i == 1 || ( (i == Nrows) && colorbar_bottom )
+				
+				if colorbar_single
+					if !( i == 1 || ( (i == Nrows) && colorbar_bottom ) )
+						Nfile += 1
+						continue
+					end
+					#cax,kw = make_axes([grid[cax_i].cax for cax_i ∈ 1:Ncols])
+					cb = colorbar(im, cax=grid[1], orientation="horizontal")
+				else
+					cb = colorbar(im, cax=grid[(col-1)*Nrows+1].cax, orientation="horizontal")
+				end
 				cb.set_label(cb_labels[col], fontsize=axis_label_font_size)
 				cb.ax.tick_params(
 									direction="in",
@@ -271,6 +307,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 									size=3, width=1
 									)
 
+				
 				grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
 				grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
 
@@ -280,7 +317,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 				end
 
 				if annotate_time[Nfile] && time_direction == "col"
-					time_annotation(ax, 1.0, par.Npixels[1], 300.0/4.0, 
+					time_annotation(ax, 1.0, par.Npixels[1], 0.075*par.Npixels[1], 
 										time_labels[Nfile])
 				end
 			end

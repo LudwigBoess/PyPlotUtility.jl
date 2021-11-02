@@ -317,3 +317,24 @@ function bin_1D_quantity_log!(count, quantity_count,
 
 end
 
+
+"""
+    σ_1D_quantity(quantity_sum, bin_count)
+
+Compute the standard deviation per bin.
+From: https://math.stackexchange.com/questions/198336/how-to-calculate-standard-deviation-with-streaming-inputs
+"""
+function σ_1D_quantity(quantity_sum, bin_count)
+
+    σ = Vector{eltype(quantity_sum[1])}(undef, length(quantity_sum))
+
+    @inbounds for i = 1:length(quantity_count)
+        if bin_count[i] > 0
+            σ[i] = √( quantity_sum[i] / bin_count[i] - ( quantity_sum[i] / bin_count[i] )^2 )
+        else
+            σ[i] = 0
+        end
+    end
+
+    return σ
+end

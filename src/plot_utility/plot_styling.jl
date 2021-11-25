@@ -16,16 +16,16 @@ end
 
 LMB default plot styling
 """
-function plot_styling!( x_pixels::Int64=600;
-                        axis_label_font_size::Int64=16,
-                        legend_font_size::Int64=15)
+function plot_styling!(x_pixels::Int64 = 600;
+    axis_label_font_size::Int64 = 16,
+    legend_font_size::Int64 = 15)
 
-    axis_label_font_size = floor(Int64, x_pixels/600*axis_label_font_size)
-    legend_font_size     = floor(Int64, x_pixels/600*legend_font_size)
+    axis_label_font_size = floor(Int64, x_pixels / 600 * axis_label_font_size)
+    legend_font_size = floor(Int64, x_pixels / 600 * legend_font_size)
 
-    rc("font", size=axis_label_font_size, family="serif")
-    rc("legend", fontsize=legend_font_size)
-    rc("mathtext", fontset="stix")
+    rc("font", size = axis_label_font_size, family = "stixgeneral")
+    rc("legend", fontsize = legend_font_size)
+    rc("mathtext", fontset = "stix")
 end
 
 """

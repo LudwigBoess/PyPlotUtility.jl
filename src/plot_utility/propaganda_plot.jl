@@ -1,56 +1,68 @@
 #using PyCall 
 
 
-function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, text_offset, fontsize=15)
+function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, text_offset, fontsize = 15)
 
-	# Line 
-	ax.arrow(xmax-length-offset, ymin+offset, length, 0.0, width = width, color="white", 
-		 length_includes_head=true, head_width=0.0)
+    # Line 
+    ax.arrow(xmax - length - offset, ymin + offset, length, 0.0, width = width, color = "white",
+        length_includes_head = true, head_width = 0.0)
 
-	# x label
-	text_x = xmax-0.5*length-offset
-	text_y = ymin+text_offset
+    # x label
+    text_x = xmax - 0.5 * length - offset
+    text_y = ymin + text_offset
 
-	ax.text(text_x, text_y, scale_text, color="white", fontsize=fontsize, horizontalalignment="center", verticalalignment="center")
+    ax.text(text_x, text_y, scale_text, color = "white", fontsize = fontsize, horizontalalignment = "center", verticalalignment = "center")
 end
 
 
 function time_annotation(ax, xmin, ymax, offset, z_text)
 
-	# x label
-	text_x = xmin+offset
-	text_y = ymax-offset
+    # x label
+    text_x = xmin + offset
+    text_y = ymax - offset
 
-	ax.text(text_x, text_y, z_text, color="white", fontsize=20, horizontalalignment="left", verticalalignment="top")
+    ax.text(text_x, text_y, z_text, color = "white", fontsize = 20, horizontalalignment = "left", verticalalignment = "top")
 end
 
 
-# """
-#     propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
-#                                 log_map=trues(Ncols),
-#                                 smooth_col=falses(Ncols),
-#                                 streamline_files=nothing,
-#                                 streamlines=falses(Ncols),
-#                                 contour_files=nothing,
-#                                 contours=falses(Ncols),                     
-#                                 contour_levels=nothing,
-#                                 smooth_contour_col=falses(Ncols),
-#                                 mask_bad=falses(Ncols),
-#                                 bad_colors=["k" for _ in 1:Ncols],
-#                                 annotate_time=falses(Nrows),
-#                                 time_labels=nothing,
-#                                 annotate_scale=trues(Nrows),
-#                                 scale_label=L"1 \: h^{-1} c" * "Mpc",
-#                                 scale_kpc=1000.0,
-#                                 r_circle=0.0,
-#                                 shift_colorbar_labels_inward=falses(Ncols),
-#                                 upscale=2.0,
-#                                 scale_pixel_offset=75.0,
-#                                 scale_text_pixel_offset=125.0
-#                                 )
+"""
+    propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
+                            map_arr = nothing, par_arr = nothing,
+                            contour_arr = nothing, contour_par_arr = nothing,
+                            log_map = trues(Ncols),
+                            colorbar_bottom = false,
+                            colorbar_single = false,
+                            smooth_col = falses(Ncols),
+                            smooth_size = 0.0,
+                            streamline_files = nothing,
+                            streamlines = falses(Ncols),
+                            contour_files = nothing,
+                            contours = falses(Ncols),
+                            contour_levels = nothing,
+                            contour_color = "white",
+                            smooth_contour_col = falses(Ncols),
+                            alpha_contours = ones(Ncols),
+                            cutoffs = nothing,
+                            mask_bad = trues(Ncols),
+                            bad_colors = ["k" for _ = 1:Ncols],
+                            annotate_time = falses(Nrows * Ncols),
+                            time_labels = nothing,
+                            time_direction = "row",
+                            annotate_scale = trues(Nrows * Ncols),
+                            scale_label = "1 h^-1 cMpc",
+                            scale_kpc = 1000.0,
+                            r_circles = [0.0, 0.0],
+                            shift_colorbar_labels_inward = trues(Ncols),
+                            upscale = Ncols + 0.5,
+                            scale_pixel_offset = 75.0,
+                            scale_text_pixel_offset = 125.0,
+                            read_mode = 1,
+                            image_num = ones(Int64, Ncols)
+                            )
 
-# Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
-# """
+Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
+
+"""
 function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
     map_arr = nothing, par_arr = nothing,
     contour_arr = nothing, contour_par_arr = nothing,
@@ -95,7 +107,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
     fig = figure(figsize = (6 * upscale * Nrows, 6.5 * upscale * Ncols))
     plot_styling!()
-	
+
     grid = axes_grid1.ImageGrid(fig, 111,          # as in plt.subplot(111)
         nrows_ncols = (Nrows, Ncols),
         axes_pad = 0.0,

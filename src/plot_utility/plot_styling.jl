@@ -2,7 +2,9 @@ using PyCall
 using PyPlot
 
 """
+    get_figure(aspect_ratio::Float64=1.1; x_pixels::Int64=600)
 
+Get a `Figure` object with a given aspect ratio for a fixed number of pixels in x-diretion.
 """
 function get_figure(aspect_ratio::Float64=1.1; x_pixels::Int64=600)
     rc("figure", dpi=100)
@@ -61,7 +63,7 @@ end
                         width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
                         tick_label_size::Int64=15, color::String="k")
 
-LMB default axis tick styling.
+LMB default colorbar tick styling.
 """
 function cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3, 
                              width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,

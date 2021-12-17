@@ -4,7 +4,7 @@ using PyPlot
 """
     slice(rng::UnitRange)
 
-Helper function to convert `Julia` `UnitRange` to `Python`.
+Helper function to convert `Julia` `UnitRange` to `Python` `slice`.
 """
 function slice(rng::UnitRange)
     pycall(pybuiltin("slice"), PyObject, first(rng), last(rng))

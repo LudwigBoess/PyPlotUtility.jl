@@ -6,3 +6,25 @@
 # PyPlotUtility.jl
 
 A number of plotting utilities for PyPlot. Please see the [Documentation](https://LudwigBoess.github.io/PyPlotUtility.jl/dev).
+
+# Example
+
+You can do a simple plot with my default styling by using
+
+```julia
+using PyPlot, PyPlotUtility
+
+fig = get_figure()
+plot_styling!()
+
+ax = gca()
+axis_ticks_styling!(ax)
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+
+plot(rand(10), rand(10), label="example")
+
+legend(frameon=false)
+
+savefig(plot_name, bbox_inches="tight")
+```

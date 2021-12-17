@@ -11,7 +11,7 @@ This package provides a number of efficiency models for Diffuse Shock Accelerati
 
 # Example
 
-```@example 1
+```julia
 using PyPlot, PyPlotUtility
 
 fig = get_figure()

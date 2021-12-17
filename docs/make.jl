@@ -8,9 +8,9 @@ makedocs(
     pages = [
         "Table of Contents" => "index.md",
         "Install" => "install.md",
-        "Kernels" => "plot_utility.md",
-        "Extending" => "calc_utility.md",
-        "SPH Functions" => "propaganda_plot.md"
+        "Plot Utility" => "plot_utility.md",
+        "Calculation Utility" => "calc_utility.md",
+        "Propaganda Plots" => "propaganda_plot.md"
     ]
 )
 

@@ -120,7 +120,8 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
     Nfile = 1
     Ncontour = 1
-
+    time_label_num = 1
+    
     for col = 1:Ncols
 
         for i = 1:Nrows
@@ -272,9 +273,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                     )
                 end
 
-                if annotate_time[Nfile] && time_direction == "row"
+                if annotate_time[Nfile] && time_direction == "col"
                     time_annotation(ax, 1.0, par.Npixels[1], 0.075 * par.Npixels[1],
-                        time_labels[Nfile])
+                        time_labels[time_label_num])
+                    time_label_num += 1
                 end
 
 
@@ -330,9 +332,9 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
                 end
 
-                if annotate_time[Nfile] && time_direction == "col"
+                if annotate_time[Nfile] && time_direction == "row"
                     time_annotation(ax, 1.0, par.Npixels[1], 0.075 * par.Npixels[1],
-                        time_labels[Nfile])
+                        time_labels[i])
                 end
             end
 

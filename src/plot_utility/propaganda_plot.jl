@@ -424,20 +424,19 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 r_circles = [0.0, 0.0],
                                 shift_colorbar_labels_inward = trues(2Ncols),
                                 upscale = Ncols,
+                                aspect_ratio = 1.42,
                                 read_mode = 1,
                                 image_num = ones(Int64, 2Ncols)
                             )
 
 
-    fig = get_figure(x_pixels = upscale*400)
-    plot_styling!(upscale*400, axis_label_font_size=7, legend_font_size=5)
+    fig = get_figure( aspect_ratio , x_pixels = upscale*300)
+    plot_styling!(upscale*300, axis_label_font_size=8, legend_font_size=5)
 
     gs = plt.GridSpec(4, Ncols, figure = fig, 
                       width_ratios = [1, 1, 1], wspace = 0.0,
                       height_ratios = [0.05, 1, 1, 0.05], hspace=0.0
                       )
-
-    #gs.update(wspace=0.0, hspace=0.0)
 
     Nfile = 1
     Ncontour = 1
@@ -664,9 +663,10 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             Nfile += 1
         end
 
-    #plt.tight_layout(fig, hpad=0.0, wpad=0.0)
+    #gs.tight_layout(fig, pad = 0.0, h_pad = -10.0, w_pad= 0.0)
+
     @info "saving $plot_name"
-    savefig(plot_name)#, bbox_inches = "tight")
+    savefig(plot_name, bbox_inches = "tight")
 
     close(fig)
 

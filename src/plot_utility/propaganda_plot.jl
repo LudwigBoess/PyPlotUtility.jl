@@ -79,7 +79,8 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 colorbar_bottom = false,
                                 colorbar_single = false,
                                 smooth_col = falses(Ncols),
-                                smooth_size = 0.0,
+                                smooth_sizes = 0.0,
+                                annotate_smoothing = falses(Ncols),
                                 streamline_files = nothing,
                                 streamlines = falses(Ncols),
                                 contour_files = nothing,
@@ -135,9 +136,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
             ax = grid[(col-1)*Nrows+i]
 
-            image_name = files[Nfile]
-
             if isnothing(map_arr)
+
+                image_name = files[Nfile]
+
                 # read SPHtoGrid image
                 if read_mode == 1
                     map, par, snap_num, units = read_fits_image(image_name)
@@ -146,7 +148,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 elseif read_mode == 2
                     map = read_smac1_binary_image(image_name)
                     smac1_info = read_smac1_binary_info(image_name)
-                    smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm] ./ 3.085678e21
+                    smac1_center = [smac1_info.xcm, smac1_info.ycm, smac1_info.zcm]
                     par = mappingParameters(center = smac1_center,
                         x_size = smac1_info.boxsize_kpc,
                         y_size = smac1_info.boxsize_kpc,
@@ -164,7 +166,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
             if smooth_col[col]
                 pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                smooth_pixel = smooth_size .* pixelSideLength
+                smooth_pixel = smooth_sizes[col] ./ pixelSideLength
                 map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
             end
 
@@ -224,10 +226,8 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 end
 
                 if smooth_contour_col[col]
-                    #println("smooth size = $smooth_size kpc")
                     pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                    smooth_pixel = smooth_size .* pixelSideLength
-                    #println("smooth size = $smooth_size pix")
+                    smooth_pixel    = smooth_sizes[col] ./ pixelSideLength
                     map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
                 end
 
@@ -298,7 +298,15 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
             end
 
             # draw smoothing beam
-            if smooth_col[col] || smooth_contour_col[col]
+            if smooth_col[col] || smooth_contour_col[col] || annotate_smoothing[col]
+                pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
+                smooth_pixel    = smooth_sizes[col] ./ pixelSideLength
+
+                ax.add_artist(matplotlib.patches.Rectangle((0.1par.Npixels[1] - 1.5*smooth_pixel[1],0.1par.Npixels[1] - 1.5*smooth_pixel[2]),           # anchor
+                                                            3*smooth_pixel[1], # width
+                                                            3*smooth_pixel[2], # height
+                                                            linewidth=1,edgecolor="gray",facecolor="gray"))
+
                 ax.add_artist(matplotlib.patches.Ellipse((0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2],
                     color = "w", fill = true, ls = "-"))
             end
@@ -361,38 +369,38 @@ end
 
 
 """
-propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
-                            map_arr = nothing, par_arr = nothing,
-                            contour_arr = nothing, contour_par_arr = nothing,
-                            log_map = trues(Ncols),
-                            colorbar_bottom = false,
-                            colorbar_single = false,
-                            smooth_col = falses(Ncols),
-                            smooth_size = 0.0,
-                            streamline_files = nothing,
-                            streamlines = falses(Ncols),
-                            contour_files = nothing,
-                            contours = falses(Ncols),
-                            contour_levels = nothing,
-                            contour_color = "white",
-                            smooth_contour_col = falses(Ncols),
-                            alpha_contours = ones(Ncols),
-                            cutoffs = nothing,
-                            mask_bad = trues(Ncols),
-                            bad_colors = ["k" for _ = 1:Ncols],
-                            annotate_time = falses(2Ncols),
-                            time_labels = nothing,
-                            annotate_text = falses(2Ncols),
-                            text_labels = nothing,
-                            annotate_scale = trues(2Ncols),
-                            scale_label = L"1 \\: h^{-1} c" * "Mpc",
-                            scale_kpc = 1000.0,
-                            r_circles = [0.0, 0.0],
-                            shift_colorbar_labels_inward = trues(Ncols),
-                            upscale = Ncols + 0.5,
-                            read_mode = 1,
-                            image_num = ones(Int64, Ncols)
-                            )
+    propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
+                                map_arr = nothing, par_arr = nothing,
+                                contour_arr = nothing, contour_par_arr = nothing,
+                                log_map = trues(2Ncols),
+                                smooth_file = falses(2Ncols),
+                                smooth_sizes = 0.0,
+                                annotate_smoothing = falses(2Ncols),
+                                streamline_files = nothing,
+                                streamlines = falses(2Ncols),
+                                contour_files = nothing,
+                                contours = falses(2Ncols),
+                                contour_levels = nothing,
+                                contour_color = "white",
+                                smooth_contour_file = falses(2Ncols),
+                                alpha_contours = ones(2Ncols),
+                                cutoffs = nothing,
+                                mask_bad = trues(2Ncols),
+                                bad_colors = ["k" for _ = 1:2Ncols],
+                                annotate_time = falses(2Ncols),
+                                time_labels = nothing,
+                                annotate_text = falses(2Ncols),
+                                text_labels = nothing,
+                                annotate_scale = trues(2Ncols),
+                                scale_label = L"1 \\: h^{-1} c" * "Mpc",
+                                scale_kpc = 1000.0,
+                                r_circles = [0.0, 0.0],
+                                shift_colorbar_labels_inward = trues(2Ncols),
+                                upscale = Ncols,
+                                aspect_ratio = 1.42,
+                                read_mode = 1,
+                                image_num = ones(Int64, 2Ncols)
+                                )
 
 Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
 
@@ -402,14 +410,15 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 contour_arr = nothing, contour_par_arr = nothing,
                                 log_map = trues(2Ncols),
                                 smooth_file = falses(2Ncols),
-                                smooth_size = 0.0,
+                                smooth_sizes = 0.0,
+                                annotate_smoothing = falses(2Ncols),
                                 streamline_files = nothing,
                                 streamlines = falses(2Ncols),
                                 contour_files = nothing,
                                 contours = falses(2Ncols),
                                 contour_levels = nothing,
                                 contour_color = "white",
-                                smooth_contour_col = falses(2Ncols),
+                                smooth_contour_file = falses(2Ncols),
                                 alpha_contours = ones(2Ncols),
                                 cutoffs = nothing,
                                 mask_bad = trues(2Ncols),
@@ -448,9 +457,10 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             subplot(get_gs(gs, row, (col-1)))
             ax = gca()
 
-            image_name = files[Nfile]
-
             if isnothing(map_arr)
+
+                image_name = files[Nfile]
+
                 # read SPHtoGrid image
                 if read_mode == 1
                     map, par, snap_num, units = read_fits_image(image_name)
@@ -477,7 +487,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             if smooth_file[Nfile]
                 pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                smooth_pixel = smooth_size .* pixelSideLength
+                smooth_pixel    = smooth_sizes[Nfile] ./ pixelSideLength
                 map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
             end
 
@@ -536,10 +546,10 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                     par = contour_par_arr[Nfile]
                 end
 
-                if smooth_contour_col[Nfile]
+                if smooth_contour_file[Nfile]
                     #println("smooth size = $smooth_size kpc")
                     pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                    smooth_pixel = smooth_size .* pixelSideLength
+                    smooth_pixel    = smooth_sizes[Nfile] ./ pixelSideLength
                     #println("smooth size = $smooth_size pix")
                     map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
                 end
@@ -611,7 +621,15 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             end
 
             # draw smoothing beam
-            if smooth_file[Nfile] || smooth_contour_col[Nfile]
+            if smooth_file[Nfile] || smooth_contour_file[Nfile] || annotate_smoothing[Nfile]
+                pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
+                smooth_pixel    = smooth_sizes[Nfile] ./ pixelSideLength
+
+                ax.add_artist(matplotlib.patches.Rectangle((0.1par.Npixels[1] - 1.5*smooth_pixel[1],0.1par.Npixels[1] - 1.5*smooth_pixel[2]),           # anchor
+                                                            3*smooth_pixel[1], # width
+                                                            3*smooth_pixel[2], # height
+                                                            linewidth=1,edgecolor="gray",facecolor="gray"))
+
                 ax.add_artist(matplotlib.patches.Ellipse((0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2],
                     color = "w", fill = true, ls = "-"))
             end

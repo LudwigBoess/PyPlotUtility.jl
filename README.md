@@ -32,7 +32,7 @@ savefig(plot_name, bbox_inches="tight")
 # Colormap convention
 
 | **Quantitiy** | **Colormap** |
-|: ---          |: ---         |
+|:-------------:|:------------:|
 | Density       | `viridis`    |
 | Temperature   | `hot`        |
 | Xray          | `plasma`     |

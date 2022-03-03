@@ -28,3 +28,22 @@ legend(frameon=false)
 
 savefig(plot_name, bbox_inches="tight")
 ```
+
+# Colormap convention
+
+| **Quantitiy** | **Colormap** |
+|: ---          |: ---         |
+| Density       | `viridis`    |
+| Temperature   | `hot`        |
+| Xray          | `plasma`     |
+| Dark Matter   | `YlGnBu_r`   |
+| Sonic Mach number | `jet`    |
+| Synchrotron   | `cubehelix`  |
+| Synch. slope  | `jet`        |
+| B-field       | `magma`      |
+| divB          | `CMRmap`     |
+| Stars         | `gray`       |
+| CRp pressure  | `Reds_r`     |
+| CRe pressure  | `Purples_r`  |
+| Richardson Number | `seismic` |
+| Turb. Energy  | `YlGnBu_r`   |

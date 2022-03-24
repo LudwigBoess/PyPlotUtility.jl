@@ -37,7 +37,7 @@ savefig(plot_name, bbox_inches="tight")
 | Temperature   | `hot`        |
 | Xray          | `plasma`     |
 | Dark Matter   | `YlGnBu_r`   |
-| Sonic Mach number | `jet`    |
+| Sonic Mach number | `gnuplot2`    |
 | Synchrotron   | `cubehelix`  |
 | Synch. slope  | `jet`        |
 | B-field       | `magma`      |

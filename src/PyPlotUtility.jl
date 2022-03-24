@@ -19,9 +19,11 @@ module PyPlotUtility
     include(joinpath("plot_utility", "plot_styling.jl"))
     include(joinpath("plot_utility", "streamlines.jl"))
     include(joinpath("plot_utility", "propaganda_plot.jl"))
+    include(joinpath("plot_utility", "secondary_axis.jl"))
 
     export  axis_ticks_styling!, cb_ticks_styling!, plot_styling!,
             get_figure,
+            get_z_secondary_axis!, get_cr_energy_axis!,
             get_gs,
             linestyle, ls,
             pixel_size,

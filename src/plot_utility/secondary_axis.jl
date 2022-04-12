@@ -50,11 +50,11 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
     ax2.set_xscale(ax.get_xscale())
 
     if CR_type == "p"
-        label  = "Energy  " * L"E_p" * " [ GeV ]"
+        label  = "Proton Energy  " * L"E_p" * " [ GeV ]"
         mass   = mp 
         factor = 1.e-9
     elseif CR_type == "e"
-        label  = "Energy  " * L"E_e" * " [ MeV ]"
+        label  = "Electron Energy  " * L"E_e" * " [ MeV ]"
         mass   = me
         factor = 1.e-6
     else
@@ -62,6 +62,13 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
     end
 
     conversion(p) = p * mass*cL^2 * erg2eV * factor
+
+    locmin = plt.LogLocator(base = 10.0, subs = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks = 20)
+    ax2.xaxis.set_minor_locator(locmin)
+    ax2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+    locmaj = matplotlib.ticker.LogLocator(base = 10, numticks = 12)
+    ax2.xaxis.set_major_locator(locmaj)
 
     xlim = ax.get_xlim()
     ax2.set_xlim(conversion.(xlim))

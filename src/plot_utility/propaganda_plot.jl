@@ -66,7 +66,9 @@ end
                             shift_colorbar_labels_inward = trues(Ncols),
                             upscale = Ncols + 0.5,
                             read_mode = 1,
-                            image_num = ones(Int64, Ncols)
+                            image_num = ones(Int64, Ncols),
+                            transparent = false,
+                            ticks_color = "k"
                             )
 
 Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
@@ -103,7 +105,9 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 shift_colorbar_labels_inward = trues(Ncols),
                                 upscale = Ncols + 0.5,
                                 read_mode = 1,
-                                image_num = ones(Int64, Ncols)
+                                image_num = ones(Int64, Ncols),
+                                transparent = false,
+                                ticks_color = "k"
                             )
 
     axes_grid1 = pyimport("mpl_toolkits.axes_grid1")
@@ -327,18 +331,19 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 end
 
                 cb.set_label(cb_labels[col], fontsize = axis_label_font_size)
-                cb.ax.tick_params(
-                    direction = "in",
-                    which = "major",
-                    labelsize = tick_label_size,
-                    size = 6, width = 1
-                )
-                cb.ax.tick_params(
-                    direction = "in",
-                    which = "minor",
-                    labelsize = tick_label_size,
-                    size = 3, width = 1
-                )
+                # cb.ax.tick_params(
+                #     direction = "in",
+                #     which = "major",
+                #     labelsize = tick_label_size,
+                #     size = 6, width = 1
+                # )
+                # cb.ax.tick_params(
+                #     direction = "in",
+                #     which = "minor",
+                #     labelsize = tick_label_size,
+                #     size = 3, width = 1
+                # )
+                cb_ticks_styling!(cb.ax, color=ticks_color)
 
 
                 grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
@@ -350,6 +355,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 end
             end
 
+            for spine in values(ax.spines)
+                spine.set_edgecolor(ticks_color)
+            end
+
             # count up file
             Nfile += 1
         end
@@ -357,7 +366,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
     end
 
     @info "saving $plot_name"
-    savefig(plot_name, bbox_inches = "tight")
+    savefig(plot_name, bbox_inches = "tight", transparent=transparent)
 
     close(fig)
 
@@ -399,7 +408,9 @@ end
                                 upscale = Ncols,
                                 aspect_ratio = 1.42,
                                 read_mode = 1,
-                                image_num = ones(Int64, 2Ncols)
+                                image_num = ones(Int64, 2Ncols),
+                                transparent = false,
+                                ticks_color = "k"
                                 )
 
 Creates an `image_grid` plot with `Ncols` and `Nrows` with colorbars on top.
@@ -435,7 +446,9 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 upscale = Ncols,
                                 aspect_ratio = 1.42,
                                 read_mode = 1,
-                                image_num = ones(Int64, 2Ncols)
+                                image_num = ones(Int64, 2Ncols),
+                                transparent = false,
+                                ticks_color = "k"
                             )
 
 
@@ -636,6 +649,10 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             ax.set_axis_off()
 
+            for spine in values(ax.spines)
+                spine.set_edgecolor(ticks_color)
+            end
+
             if row == 1
                 loc = "top"
                 cax_row = 0
@@ -657,16 +674,18 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             cb = colorbar(sm, cax=cax, fraction = 0.046, orientation = "horizontal")
 
             cb.set_label(cb_labels[Nfile])
-            cb.ax.tick_params(
-                direction = "in",
-                which = "major",
-                size = 6, width = 1
-            )
-            cb.ax.tick_params(
-                direction = "in",
-                which = "minor",
-                size = 3, width = 1
-            )
+            # cb.ax.tick_params(
+            #     direction = "in",
+            #     which = "major",
+            #     size = 6, width = 1
+            # )
+            # cb.ax.tick_params(
+            #     direction = "in",
+            #     which = "minor",
+            #     size = 3, width = 1
+            # )
+
+            cb_ticks_styling!(cb.ax, color=ticks_color)
 
             cb.ax.xaxis.set_ticks_position(loc)
             cb.ax.xaxis.set_label_position(loc)
@@ -684,7 +703,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
     #gs.tight_layout(fig, pad = 0.0, h_pad = -10.0, w_pad= 0.0)
 
     @info "saving $plot_name"
-    savefig(plot_name, bbox_inches = "tight")
+    savefig(plot_name, bbox_inches = "tight", transparent=transparent)
 
     close(fig)
 

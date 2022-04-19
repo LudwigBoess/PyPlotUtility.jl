@@ -16,7 +16,8 @@ Adds a secondary x-axis for an axis `ax` with a time series in Gyrs, to show the
 """
 function get_z_secondary_axis!(ax::PyCall.PyObject, 
                               c::Cosmology.AbstractCosmology=cosmology();
-                              z_plot=[15, 4, 2, 1, 0.5, 0.3, 0.2, 0.1, 0])
+                              z_plot=[15, 4, 2, 1, 0.5, 0.3, 0.2, 0.1, 0],
+                              color::String="k")
 
     ax2 = ax.twiny()
     ax2.set_xlabel("Redshift  " * L"z")
@@ -27,7 +28,11 @@ function get_z_secondary_axis!(ax::PyCall.PyObject,
 
     ax2.tick_params(direction="in",
                     which="major", size=12, 
-                    width=1, color="k")
+                    width=1, color=color)
+
+    for spine ∈ values(ax2.spines)
+        spine.set_edgecolor(color)
+    end
 
     return ax2
 end
@@ -44,7 +49,7 @@ const erg2eV = 6.242e+11
 
 
 function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
-                            p_plot::Vector{<:Real}=10.0.^LinRange(0, 6.0, 6))
+                            color::String="k")
 
     ax2 = ax.twiny()
     ax2.set_xscale(ax.get_xscale())
@@ -80,13 +85,19 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
 
     ax2.tick_params(direction="in", labelsize=15,
                 which="major", size=6, 
-                width=1, color="k")
+                width=1)
 
     ax2.tick_params(direction="in", labelsize=15,
                 which="minor", size=3, 
-                width=1, color="k")
+                width=1)
 
     ax2.minorticks_on()
+
+    ax2.tick_params(color=color, labelcolor=color)
+
+    for spine ∈ values(ax2.spines)
+        spine.set_edgecolor(color)
+    end
 
     return ax2
 

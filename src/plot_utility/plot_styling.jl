@@ -18,9 +18,9 @@ end
 
 LMB default plot styling
 """
-function plot_styling!(x_pixels::Int64 = 600;
-    axis_label_font_size::Int64 = 16,
-    legend_font_size::Int64 = 15)
+function plot_styling!( x_pixels::Int64 = 600;
+                        axis_label_font_size::Int64 = 16,
+                        legend_font_size::Int64 = 15)
 
     axis_label_font_size = floor(Int64, x_pixels / 600 * axis_label_font_size)
     legend_font_size = floor(Int64, x_pixels / 600 * legend_font_size)
@@ -54,9 +54,15 @@ function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3,
         spine.set_edgecolor(color)
     end
 
+    rc("text", color=color)
+    rc("axes", labelcolor=color)
+    rc("xtick", color=color)
+    rc("ytick", color=color)
+
     return ax
 
 end
+
 
 """
     cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, 

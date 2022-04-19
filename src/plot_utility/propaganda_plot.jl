@@ -456,7 +456,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
     plot_styling!(upscale*300, axis_label_font_size=8, legend_font_size=5)
 
     gs = plt.GridSpec(4, Ncols, figure = fig, 
-                      width_ratios = [1, 1, 1], wspace = 0.0,
+                      width_ratios = ones(Ncols), wspace = 0.0,
                       height_ratios = [0.05, 1, 1, 0.05], hspace=0.0
                       )
 

@@ -116,7 +116,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
     tick_label_size = 15
 
     fig = figure(figsize = (6 * upscale * Nrows, 6.5 * upscale * Ncols))
-    plot_styling!()
+    plot_styling!(color=ticks_color)
 
     grid = axes_grid1.ImageGrid(fig, 111,          # as in plt.subplot(111)
         nrows_ncols = (Nrows, Ncols),
@@ -453,7 +453,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
 
     fig = get_figure( aspect_ratio , x_pixels = upscale*300)
-    plot_styling!(upscale*300, axis_label_font_size=8, legend_font_size=5)
+    plot_styling!(upscale*300, axis_label_font_size=8, legend_font_size=5, color=ticks_color)
 
     gs = plt.GridSpec(4, Ncols, figure = fig, 
                       width_ratios = ones(Ncols), wspace = 0.0,

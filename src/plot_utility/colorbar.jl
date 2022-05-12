@@ -128,8 +128,14 @@ function shift_colorbar_label!(cax1::PyCall.PyObject, shift::String)
     elseif shift ∈ ["right", "r"]
         label1 = cax1.xaxis.get_majorticklabels()
         label1[1].set_horizontalalignment("left")
+    elseif shift ∈ ["top", "t"]
+        label1 = cax1.yaxis.get_majorticklabels()
+        label1[1].set_verticalalignment("bottom")
+    elseif shift ∈ ["bottom", "b"]
+        label1 = cax1.yaxis.get_majorticklabels()
+        label1[end].set_verticalalignment("top")
     else
-        error("Shift needs to be 'left'/'l' or 'right'/'r' !")
+        error("Shift needs to be 'left'/'l', 'right'/'r' 'top / t' or 'bottom / b' !")
     end
 
 end

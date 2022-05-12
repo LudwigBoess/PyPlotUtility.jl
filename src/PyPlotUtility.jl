@@ -37,6 +37,7 @@ module PyPlotUtility
             bin_1D, bin_1D!, bin_1D_log, bin_1D_log!, bin_1D_quantity!, bin_1D_quantity_log!,
             bin_2D, bin_2D!, bin_2D_log, bin_2D_log!, bin_2D_quantity!, bin_2D_quantity_log!,
             propaganda_plot_columns,
+            propaganda_plot_rows,
             propaganda_plot_double_row
 
 end # module

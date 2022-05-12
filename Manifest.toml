@@ -95,6 +95,12 @@ git-tree-sha1 = "f74e9d5388b8620b4cee35d4c5a618dd4dc547f4"
 uuid = "187b0558-2788-49d3-abe0-74a17ed4e7c9"
 version = "1.3.0"
 
+[[Cosmology]]
+deps = ["QuadGK", "Unitful", "UnitfulAstro"]
+git-tree-sha1 = "263a0cd281ddefa7306fa9679d572a651adb595a"
+uuid = "76746363-e552-5dba-9a5a-cef6fa9cc5ab"
+version = "1.0.1"
+
 [[CustomUnitRanges]]
 git-tree-sha1 = "537c988076d001469093945f3bd0b300b8d3a7f3"
 uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
@@ -164,9 +170,9 @@ version = "1.4.3"
 
 [[FFTW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "5a0d4b6a22a34d17d53543bd124f4b08ed78e8b0"
+git-tree-sha1 = "3676abafff7e4ff07bbd2c42b3d8201f31653dcc"
 uuid = "f5851436-0d7a-5f13-b9de-f02708fd171a"
-version = "3.3.9+7"
+version = "3.3.9+8"
 
 [[FITSIO]]
 deps = ["CFITSIO", "Printf", "Reexport", "Tables"]
@@ -196,10 +202,10 @@ uuid = "708ec375-b3d6-5a57-a7ce-8257bf98657a"
 version = "0.8.0"
 
 [[Gumbo_jll]]
-deps = ["Libdl", "Pkg"]
-git-tree-sha1 = "86111f5523d7c42da0edd85ef7999c663881ac1e"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "89baea4583316379413109fe88c290b19c990f86"
 uuid = "528830af-5a63-567c-a44a-034ed33b8444"
-version = "0.10.1+1"
+version = "0.10.1+2"
 
 [[IOCapture]]
 deps = ["Logging"]
@@ -275,7 +281,7 @@ uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
 [[LinearAlgebra]]
-deps = ["Libdl"]
+deps = ["Libdl", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[LogExpFunctions]]
@@ -289,9 +295,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
-git-tree-sha1 = "c253236b0ed414624b083e6b72bfe891fbd2c7af"
+git-tree-sha1 = "5455aef09b40e5020e1520f551fa3135040d4ed0"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-version = "2021.1.1+1"
+version = "2021.1.1+2"
 
 [[MacroTools]]
 deps = ["Markdown", "Random"]
@@ -337,6 +343,10 @@ deps = ["Adapt"]
 git-tree-sha1 = "e436bb81d2ce4f01fb02374c4410e5a9229c85f9"
 uuid = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 version = "1.10.0"
+
+[[OpenBLAS_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
+uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
 
 [[OpenSpecFun_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
@@ -393,12 +403,18 @@ git-tree-sha1 = "67dde2482fe1a72ef62ed93f8c239f947638e5a2"
 uuid = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 version = "2.9.0"
 
+[[QuadGK]]
+deps = ["DataStructures", "LinearAlgebra"]
+git-tree-sha1 = "78aadffb3efd2155af139781b8a8df1ef279ea39"
+uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+version = "2.4.2"
+
 [[REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[Random]]
-deps = ["Serialization"]
+deps = ["SHA", "Serialization"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[Reexport]]
@@ -526,6 +542,18 @@ git-tree-sha1 = "b3682a0559219355f1e3c8024e9f97adce2d4623"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
 version = "1.8.0"
 
+[[UnitfulAngles]]
+deps = ["Dates", "Unitful"]
+git-tree-sha1 = "d6cfdb6ddeb388af1aea38d2b9905fa014d92d98"
+uuid = "6fb2a4bd-7999-5318-a3b2-8ad61056cd98"
+version = "0.6.2"
+
+[[UnitfulAstro]]
+deps = ["Unitful", "UnitfulAngles"]
+git-tree-sha1 = "c4e1c470a94063b911fd1b1a204cd2bb34a8cd15"
+uuid = "6112ee07-acf9-5e0f-b108-d242c714bf9f"
+version = "1.1.1"
+
 [[VersionParsing]]
 git-tree-sha1 = "80229be1f670524750d905f8fc8148e5a8c4537f"
 uuid = "81def892-9a0e-5fdd-b105-ffc91e053289"
@@ -534,6 +562,10 @@ version = "1.2.0"
 [[Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
+
+[[libblastrampoline_jll]]
+deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
+uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 
 [[libsass_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]

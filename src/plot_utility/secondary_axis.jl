@@ -3,6 +3,26 @@ using Unitful
 using Printf
 
 """
+    get_z_tick_strings(z_plot)
+
+Converts the numeric values for the redshift labels into strings.
+"""
+function get_z_tick_strings(z_plot)
+
+    z_ticks = Vector{AbstractString}(undef, length(z_plot))
+
+    for i = 1:length(z_plot)
+        if isinteger(z_plot[i])
+            z_ticks[i] = "$(@sprintf("%i", z_plot[i]))"
+        else
+            z_ticks[i] = "$(@sprintf("%0.1f", z_plot[i]))"
+        end
+    end
+
+    z_ticks
+end
+
+"""
     get_z_secondary_axis(ax::PyCall.PyObject, c::Cosmology.AbstractCosmology=cosmology();
                          x_lim::Vector{<:Real}=[2.0, 14.0],
                          z_plot=[15, 4, 2, 1, 0.5, 0.3, 0.2, 0.1, 0])
@@ -16,7 +36,7 @@ Adds a secondary x-axis for an axis `ax` with a time series in Gyrs, to show the
 """
 function get_z_secondary_axis!(ax::PyCall.PyObject, 
                               c::Cosmology.AbstractCosmology=cosmology();
-                              z_plot=[15, 4, 2, 1, 0.5, 0.3, 0.2, 0.1, 0],
+                              z_plot=[15, 4, 2, 1, 0.5, 0.3, 0.1, 0],
                               color::String="k")
 
     ax2 = ax.twiny()
@@ -24,10 +44,11 @@ function get_z_secondary_axis!(ax::PyCall.PyObject,
     ax2.set_xlim(ax.get_xlim())
 
     ax2.set_xticks([ustrip(age(c, z)) for z in z_plot])
-    ax2.set_xticklabels(["$(@sprintf("%0.1f", z))" for z in z_plot])
+
+    ax2.set_xticklabels(get_z_tick_strings(z_plot))
 
     ax2.tick_params(direction="in",
-                    which="major", size=12, 
+                    which="major", size=6, 
                     width=1, color=color)
 
     for spine ∈ values(ax2.spines)

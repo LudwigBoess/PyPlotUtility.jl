@@ -4,6 +4,8 @@ authors = ["LudwigBoess <lboess@usm.lmu.de>"]
 version = "0.1.0"
 
 [deps]
+DSAModels = "c94b82ce-bc6a-4c64-9fc0-cb2d7d683713"
+Healpix = "9f4e344d-96bc-545a-84a3-ae6b9e1b672b"
 ImageFiltering = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
@@ -11,5 +13,4 @@ PyPlot = "d330b81b-6aea-500a-939a-2ce795aea3ee"
 SPHtoGrid = "8a806948-229a-4117-b79b-c12ac366026f"
 
 [compat]
-SPHtoGrid = "0.3"
 julia = "1.6"

@@ -15,13 +15,13 @@ function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, tex
 end
 
 
-function time_annotation(ax, xmin, ymax, offset, z_text)
+function time_annotation(ax, xmin, ymax, offset, z_text, color="white")
 
     # x label
     text_x = xmin + offset
     text_y = ymax - offset
 
-    ax.text(text_x, text_y, z_text, color = "white", fontsize = 20, horizontalalignment = "left", verticalalignment = "top")
+    ax.text(text_x, text_y, z_text, color = color, fontsize = 20, horizontalalignment = "left", verticalalignment = "top")
 end
 
 

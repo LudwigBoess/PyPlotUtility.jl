@@ -60,7 +60,7 @@ end
                             annotation_color = "w",
                             scale_label = L"1 \\: h^{-1} c" * "Mpc",
                             scale_kpc = 1000.0,
-                            r_circles = [0.0, 0.0],
+                            r_circles = nothing,
                             shift_colorbar_labels_inward = trues(Ncols),
                             upscale = Ncols + 0.5,
                             read_mode = 1,
@@ -100,7 +100,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                                 annotation_color = "w",
                                 scale_label = L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
-                                r_circles = [0.0, 0.0],
+                                r_circles = nothing,
                                 shift_colorbar_labels_inward = trues(Ncols),
                                 upscale = Ncols + 0.5,
                                 read_mode = 1,
@@ -300,9 +300,11 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
             pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
 
-            for r_circle ∈ r_circles
-                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circle / pixelSideLength,
-                    color = "w", fill = false, ls = "--"))
+            if !isnothing(r_circles)
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = ":", alpha=0.5))
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = "--", alpha=0.5))
             end
 
             # draw smoothing beam
@@ -378,7 +380,7 @@ end
 
 
 """
-    propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
+    propaganda_plot_rows(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                             map_arr = nothing, par_arr = nothing,
                             contour_arr = nothing, contour_par_arr = nothing,
                             log_map = trues(Ncols),
@@ -405,7 +407,7 @@ end
                             annotation_color = "w",
                             scale_label = L"1 \\: h^{-1} c" * "Mpc",
                             scale_kpc = 1000.0,
-                            r_circles = [0.0, 0.0],
+                            r_circles = nothing,
                             shift_colorbar_labels_inward = trues(Ncols),
                             upscale = Ncols + 0.5,
                             read_mode = 1,
@@ -445,7 +447,7 @@ function propaganda_plot_rows(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr,
                                 annotation_color = "w",
                                 scale_label = L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
-                                r_circles = [0.0, 0.0],
+                                r_circles = nothing,
                                 shift_colorbar_labels_inward = trues(Nrows),
                                 upscale = Ncols + 0.5,
                                 read_mode = 1,
@@ -644,9 +646,11 @@ function propaganda_plot_rows(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr,
 
             pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
 
-            for r_circle ∈ r_circles
-                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circle / pixelSideLength,
-                    color = "w", fill = false, ls = "--"))
+            if !isnothing(r_circles)
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = ":", alpha=0.5))
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = "--", alpha=0.5))
             end
 
             # draw smoothing beam
@@ -748,7 +752,7 @@ end
                                 annotate_scale = trues(2Ncols),
                                 scale_label = L"1 \\: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
-                                r_circles = [0.0, 0.0],
+                                r_circles = nothing,
                                 shift_colorbar_labels_inward = trues(2Ncols),
                                 upscale = Ncols,
                                 aspect_ratio = 1.42,
@@ -786,14 +790,15 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 annotate_scale = trues(2Ncols),
                                 scale_label = L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
-                                r_circles = [0.0, 0.0],
+                                r_circles = nothing,
                                 shift_colorbar_labels_inward = trues(2Ncols),
                                 upscale = Ncols,
                                 aspect_ratio = 1.42,
                                 read_mode = 1,
                                 image_num = ones(Int64, 2Ncols),
                                 transparent = false,
-                                ticks_color = "k"
+                                ticks_color = "k",
+                                annotation_color = "w"
                             )
 
 
@@ -975,9 +980,11 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
 
-            for r_circle ∈ r_circles
-                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circle / pixelSideLength,
-                    color = "w", fill = false, ls = "--"))
+            if !isnothing(r_circles)
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = ":", alpha=0.5))
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                        color = "w", fill = false, ls = "--", alpha=0.5))
             end
 
             # draw smoothing beam

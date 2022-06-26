@@ -186,7 +186,11 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 # get colormap object
                 cmap = plt.get_cmap(im_cmap[col])
                 # set invalid pixels to minimum
-                cmap.set_bad(cmap(vmin_arr[col]))
+                if im_cmap[col][end-1:end] == "_r"
+                    cmap.set_bad(cmap(vmax_arr[col]))
+                else
+                    cmap.set_bad(cmap(vmin_arr[col]))
+                end
             end
 
             if log_map[col]
@@ -268,7 +272,9 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
             if col == 1
 
-                pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
+                map_x_pixels = size(map,2)
+
+                pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / map_x_pixels
 
 
                 # annotate_arrows(ax, 1.0, 1.0, 300.0/4.0, 500.0/4.0, 
@@ -278,10 +284,10 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                     # annotate_scale(ax, par.Npixels[1], 1.0, 300.0/4.0, 1000.0/pixelSideLength, 
                     # 	L"1 \: h^{-1} c" * "Mpc", 500.0/4.0)
 
-                    scale_annotation(ax, par.Npixels[1], 1.0, par.Npixels[1] / 14, 
+                    scale_annotation(ax, map_x_pixels, 1.0,map_x_pixels / 14, 
                         scale_kpc / pixelSideLength, 0.1,
                         scale_label,
-                        par.Npixels[1] / 8,
+                        map_x_pixels / 8,
                         annotation_color
                     )
                 end

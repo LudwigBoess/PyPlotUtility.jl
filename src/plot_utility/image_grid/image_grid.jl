@@ -85,7 +85,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
     end
 
     if colorbar_mode == "single"
-        colorbar_size = "4%"
+        colorbar_size = "2%"
     else
         colorbar_size = "7%"
     end
@@ -128,6 +128,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             ax = grid[(col-1)*Nrows+i]
 
             # read map and parameters
+            println("image")
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 
             if smooth_file[Nfile]
@@ -183,10 +184,14 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if contours[selected]
 
-                par, map = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
+                println("contours")
+                map, par = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
 
                 if smooth_contour_file[Nfile]
-                    smooth_map!(map, smooth_sizes[Nfile], par)
+                    println("smoothing")
+                    map = smooth_map!(map, smooth_sizes[col], par)
+
+                    println(maximum(map))
                 end
 
 
@@ -276,10 +281,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
                 smooth_pixel    = smooth_sizes[col] ./ pixelSideLength
 
-                ax.add_artist(matplotlib.patches.Rectangle((0.1par.Npixels[1] - 1.5*smooth_pixel[1],0.1par.Npixels[1] - 1.5*smooth_pixel[2]),           # anchor
-                                                            3*smooth_pixel[1], # width
-                                                            3*smooth_pixel[2], # height
-                                                            linewidth=1,edgecolor="gray",facecolor="gray"))
+                # ax.add_artist(matplotlib.patches.Rectangle((0.1par.Npixels[1] - 1.5*smooth_pixel[1],0.1par.Npixels[1] - 1.5*smooth_pixel[2]),           # anchor
+                #                                             3*smooth_pixel[1], # width
+                #                                             3*smooth_pixel[2], # height
+                #                                             linewidth=1,edgecolor="gray",facecolor="gray"))
 
                 ax.add_artist(matplotlib.patches.Ellipse((0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2],
                     color = "w", fill = true, ls = "-"))

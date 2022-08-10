@@ -56,6 +56,10 @@ function read_map_par(read_mode, Nfile, files, map_arr, par_arr)
         elseif read_mode == 3
             map = read_smac2_image(image_name, image_num[Nfile])
             par = read_smac2_info(image_name)
+            
+        elseif read_mode == 4
+            map = read_smac1_fits_image(image_name, 1)
+            par = read_smac1_fits_info(image_name)
         end
     else
         map = map_arr[Nfile]

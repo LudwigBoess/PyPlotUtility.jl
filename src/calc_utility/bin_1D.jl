@@ -113,6 +113,63 @@ function bin_1D!(count, quantity, bin_lim;
 end
 
 
+"""
+    bin_1D_quantity(count, quantity_count, 
+                     quantity, bin_lim; 
+                     Nbins::Int=100, show_progress::Bool=true)
+
+Get a 1D histogram of `quantity` in the limits `bin_lim`, over a number if bins `Nbins` for pre-allocated arrays `count` and `quantity_count`.
+Should be used if computing the mean over multiple files.
+"""
+function bin_1D_quantity( x_q, bin_q, bin_lim; 
+                           Nbins::Int=100, show_progress::Bool=true,
+                           calc_mean::Bool=true)
+
+    # allocate Nbins x Nbins matrix filled with zeros
+    count = zeros(Int64, Nbins)
+
+    # if a quantity should be mapped allocate Nbins x Nbins matrix filled with zeros
+    count_quantity = zeros(eltype(quantity[1]), Nbins)
+
+    # allocate Nbins x Nbins matrix filled with zeros
+    count = zeros(Int64, Nbins)
+    
+
+    # get logarithmic bin spacing
+    dbin = ( bin_lim[2] - bin_lim[1] ) / Nbins
+
+    # optional progress meter
+    if show_progress
+        P = Progress(size(quantity,1))
+        idx_p = 0
+    end
+
+    @inbounds for i = 1:size(quantity,1)
+
+        bin = 1 + floor( Int64, ( x_q[i] - bin_lim[1] ) / dbin )
+
+        if (1 <= bin <= Nbins)
+            
+            count[bin]          += 1
+            count_quantity[bin] += bin_q[i]
+            
+        end
+
+        # update progress meter
+        if show_progress
+            idx_p += 1
+            ProgressMeter.update!(P, idx_p)
+        end
+    end
+
+    if calc_mean
+        return count .* quantity_count ./ count.^2
+    else
+        return quantity_count
+    end
+
+end
+
 
 """
     bin_1D_quantity!(count, quantity_count, 
@@ -269,6 +326,64 @@ function bin_1D_log!(count, quantity, bin_lim;
     end
 
     return count
+
+end
+
+"""
+    bin_1D_quantity_log(count, quantity_count, 
+                        quantity, bin_lim; 
+                        Nbins::Int=100, show_progress::Bool=true)
+
+Get a 1D histogram of `quantity` in the limits `bin_lim`, over a number if bins `Nbins` for pre-allocated arrays `count` and `quantity_count`.
+Should be used if computing the mean over multiple files.
+"""
+function bin_1D_quantity_log( x_q, bin_q, bin_lim; 
+                              Nbins::Int=100, show_progress::Bool=true,
+                              calc_mean::Bool=true)
+
+    # allocate Nbins x Nbins matrix filled with zeros
+    count = zeros(Int64, Nbins)
+
+    # if a quantity should be mapped allocate Nbins x Nbins matrix filled with zeros
+    count_quantity = zeros(eltype(bin_q[1]), Nbins)
+
+    # allocate Nbins x Nbins matrix filled with zeros
+    count = zeros(Int64, Nbins)
+    
+
+    # get logarithmic bin spacing
+    dlogbin = (log10(bin_lim[2]) - log10(bin_lim[1]) ) / Nbins
+
+    # optional progress meter
+    if show_progress
+        P = Progress(size(bin_q,1))
+        idx_p = 0
+    end
+
+    @inbounds for i = 1:size(x_q,1)
+
+        bin = 1 + floor( Int64, (log10(x_q[i]) - log10(bin_lim[1]))/dlogbin )
+
+
+        if (1 <= bin <= Nbins)
+            
+            count[bin]          += 1
+            count_quantity[bin] += bin_q[i]
+            
+        end
+
+        # update progress meter
+        if show_progress
+            idx_p += 1
+            ProgressMeter.update!(P, idx_p)
+        end
+    end
+
+    if calc_mean
+        return count .* count_quantity ./ count.^2
+    else
+        return count_quantity
+    end
 
 end
 

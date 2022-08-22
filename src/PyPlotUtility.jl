@@ -18,9 +18,14 @@ module PyPlotUtility
     include(joinpath("plot_utility", "pcolormesh.jl"))
     include(joinpath("plot_utility", "plot_styling.jl"))
     include(joinpath("plot_utility", "streamlines.jl"))
-    include(joinpath("plot_utility", "propaganda_plot.jl"))
     include(joinpath("plot_utility", "secondary_axis.jl"))
     include(joinpath("plot_utility", "allsky.jl"))
+    include(joinpath("plot_utility", "image_grid", "utility.jl"))
+    include(joinpath("plot_utility", "image_grid", "2rows.jl"))
+    include(joinpath("plot_utility", "image_grid", "rows.jl"))
+    include(joinpath("plot_utility", "image_grid", "columns.jl"))
+    include(joinpath("plot_utility", "image_grid", "shared_colorbar.jl"))
+    include(joinpath("plot_utility", "image_grid", "image_grid.jl"))
 
     export  axis_ticks_styling!, cb_ticks_styling!, plot_styling!,
             get_figure,
@@ -40,6 +45,7 @@ module PyPlotUtility
             propaganda_plot_columns,
             propaganda_plot_rows,
             propaganda_plot_double_row,
-            plot_single_allsky
+            plot_single_allsky,
+            plot_image_grid
 
 end # module

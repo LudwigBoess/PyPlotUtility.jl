@@ -65,6 +65,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 scale_label = L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
                                 r_circles = nothing,
+                                cicle_color = "w",
+                                circle_alpha = 0.5,
                                 smooth_contour_col = falses(Ncols),
                                 shift_colorbar_labels_inward = trues(Nrows*Ncols),
                                 upscale = Ncols,
@@ -128,7 +130,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             ax = grid[(col-1)*Nrows+i]
 
             # read map and parameters
-            println("image")
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 
             if smooth_file[Nfile]
@@ -136,9 +137,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if smooth_col[col]
-                pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                smooth_pixel = smooth_sizes[col] ./ pixelSideLength
-                map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
+                map = smooth_map!(map, smooth_sizes[col], par)
             end
 
             if !isnothing(cutoffs)
@@ -184,14 +183,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if contours[selected]
 
-                println("contours")
                 map, par = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
 
                 if smooth_contour_file[Nfile]
-                    println("smoothing")
                     map = smooth_map!(map, smooth_sizes[col], par)
-
-                    println(maximum(map))
                 end
 
 
@@ -222,17 +217,17 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 Ncontour += 1
             end
 
-            annotate_now = false
+            annotate_now = true
 
-            if grid_direction == "column"
-                if col == 1
-                    annotate_now = true
-                end
-            else
-                if i == 1
-                    annotate_now = true
-                end
-            end
+            # if grid_direction == "column"
+            #     if col == 1
+            #         annotate_now = true
+            #     end
+            # else
+            #     if i == 1
+            #         annotate_now = true
+            #     end
+            # end
             if annotate_now
 
                 map_x_pixels = size(map,2)
@@ -271,9 +266,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if !isnothing(r_circles)
                 ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
-                        color = "w", fill = false, ls = ":", alpha=0.5))
+                        color = cicle_color, fill = false, ls = ":", alpha=circle_alpha))
                 ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
-                        color = "w", fill = false, ls = "--", alpha=0.5))
+                        color = cicle_color, fill = false, ls = "--", alpha=circle_alpha))
             end
 
             # draw smoothing beam

@@ -71,7 +71,7 @@ end
 
 function smooth_map!(map, smooth_size, par)
     pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-    smooth_pixel    = smooth_size ./ pixelSideLength
+    smooth_pixel    = smooth_size ./ pixelSideLength ./ 2
     map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
     return map
 end

@@ -89,15 +89,8 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
 
     conversion(p) = p * mass*cL^2 * erg2eV * factor
 
-    locmin = plt.LogLocator(base = 10.0, subs = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks = 20)
-    ax2.xaxis.set_minor_locator(locmin)
-    ax2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
-
-    locmaj = matplotlib.ticker.LogLocator(base = 10, numticks = 12)
-    ax2.xaxis.set_major_locator(locmaj)
-
     xlim = ax.get_xlim()
-    ax2.set_xlim(conversion.(xlim))
+    ax2.set_xlim(conversion.(xlim))   
 
     #ax2.set_xticks([p for p in p_plot])
     #ax2.set_xticklabels(["$(@sprintf("%f", p))" for p in p_plot])
@@ -115,6 +108,14 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
     ax2.minorticks_on()
 
     ax2.tick_params(color=color, labelcolor=color)
+
+    locmin = plt.LogLocator(base = 10.0, subs = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks = 20)
+    ax2.xaxis.set_minor_locator(locmin)
+    ax2.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+    locmaj = matplotlib.ticker.LogLocator(base = 10, numticks = 12)
+    ax2.xaxis.set_major_locator(locmaj)
+
 
     for spine ∈ values(ax2.spines)
         spine.set_edgecolor(color)

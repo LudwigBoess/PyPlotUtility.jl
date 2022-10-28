@@ -1,5 +1,7 @@
 using Healpix
+using PyCall
 
+pe = pyimport("matplotlib.patheffects")
 
 """
     plot_single_allsky( filename::String, 
@@ -30,12 +32,27 @@ function plot_single_allsky(filename::String,
                             ticks_color::String = "k",
                             mask_bad::Bool=true,
                             bad_color::String="w",
-                            transparent::Bool=false)
+                            bad_alpha::Real=1.0,
+                            transparent::Bool=false,
+                            contour_file=nothing,
+                            contour_levels::Vector{<:Real}=[0.5, 1.0],
+                            contour_color::String="w",
+                            contour_alpha::Real=0.8,
+                            contour_linestyle::String="dotted",
+                            annotations=nothing)
+
 
     # read healpix image
     m = Healpix.readMapFromFITS(filename, 1, Float64)
     # construct 2D array by deprojecting
     image, mask, maskflag = project(mollweideprojinv, m, 2Npixels, Npixels)
+
+    if !isnothing(contour_file)
+        # read healpix image
+        m = Healpix.readMapFromFITS(contour_file, 1, Float64)
+        # construct 2D array by deprojecting
+        contour_image, mask, maskflag = project(mollweideprojinv, m, 2Npixels, Npixels)
+    end
 
 
     fig = get_figure( 1.8 , x_pixels = upscale*300)
@@ -55,32 +72,48 @@ function plot_single_allsky(filename::String,
         # get colormap object
         cmap = plt.get_cmap(im_cmap)
         # set invalid pixels to bad color
-        cmap.set_bad(bad_color)
+        cmap.set_bad(bad_color, bad_alpha)
     end
 
     if log_map
         im = ax.imshow(image, norm = matplotlib.colors.LogNorm(),
                        vmin = clim[1], vmax = clim[2],
                        cmap = im_cmap,
-                       origin = "lower"
+                       origin = "upper"
                       )
     else
         im = ax.imshow(image,
                        vmin = clim[1], vmax = clim[2],
                        cmap = im_cmap,
-                       origin = "lower"
+                       origin = "upper"
                         )
     end
 
+    # add contours if requested
+    if !isnothing(contour_file)
+        println(maximum(contour_image[.!isnan.(contour_image)]))
+        ax.contour(contour_image,
+                    levels = contour_levels,
+                    alpha = contour_alpha,
+                    colors = contour_color,
+                    linestyles = contour_linestyle,
+                    origin = "lower"
+                    )
+    end
+
+    # add annotations for cluster names 
+    # if !isnothing(annotations)
+    #     for ann ∈ annotations
+    #         txt = ax.text(ann.xpix, ann.ypix, ann.name, color="w", fontsize=10)
+    #         #txt.set_path_effects([pe.withStroke(linewidth=1, foreground="k")])
+    #     end
+    # end
+
     if annotate_time
-        time_annotation(ax, 1.0, Npixels, 0.075 * Npixels,
+        time_annotation(ax, 1.0, 0.05 * Npixels, 0.0,
                         time_label, ticks_color)
     end
 
-    # if annotate_text
-    #     text_annotation(ax, par.Npixels[1], par.Npixels[1], 0.075 * par.Npixels[1],
-    #                     text_labels)
-    # end
 
     ax.set_axis_off()
 

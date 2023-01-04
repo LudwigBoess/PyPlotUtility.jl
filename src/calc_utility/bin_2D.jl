@@ -224,7 +224,6 @@ function bin_2D_log(x_q, y_q, x_lim, y_lim, bin_q=nothing;
         end
     end
 
-
     if isnothing(bin_q)
         # return simple histogram
         return phase_map_count

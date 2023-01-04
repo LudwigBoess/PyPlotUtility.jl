@@ -70,7 +70,9 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 image_num = ones(Int64, 2Ncols),
                                 transparent = false,
                                 ticks_color = "k",
-                                annotation_color = "w"
+                                N_ticks = zeros(Int64, 2Ncols),
+                                annotation_color = "w",
+                                dpi=400
                             )
 
 
@@ -237,14 +239,31 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             if log_map[Nfile]
                 sm = plt.cm.ScalarMappable(cmap = im_cmap[Nfile], norm = matplotlib.colors.LogNorm(vmin = vmin_arr[Nfile], vmax = vmax_arr[Nfile]))
+                if !iszero(N_ticks[Nfile])
+                    custom_ticks = 10.0.^LinRange(log10(vmin_arr[Nfile]), log10(vmax_arr[Nfile]), N_ticks[Nfile])
+                end
             else
                 sm = plt.cm.ScalarMappable(cmap = im_cmap[Nfile], plt.Normalize(vmin = vmin_arr[Nfile], vmax = vmax_arr[Nfile]) )
+                if !iszero(N_ticks[Nfile])
+                    custom_ticks = LinRange(vmin_arr[Nfile], vmax_arr[Nfile], N_ticks[Nfile])
+                end
             end
+
 
             sm.set_array([])
             cb = colorbar(sm, cax=cax, fraction = 0.046, orientation = "horizontal")
 
+            #cax.locator_params(axis="x", nbins=4)
+
             cb.set_label(cb_labels[Nfile])
+
+            # cb.ax.set_xticks(custom_ticks)
+            # cb.ax.set_xticklabels(custom_ticks)
+
+            #cb.ax.xaxis.set_major_locator(plt.MaxNLocator(4))
+
+            #cb.ax.minorticks_on()
+
             cb.ax.tick_params(
                 direction = "in",
                 which = "major",
@@ -258,8 +277,11 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             #cb_ticks_styling!(cb.ax, color=ticks_color)
 
+            
+
             cb.ax.xaxis.set_ticks_position(loc)
             cb.ax.xaxis.set_label_position(loc)
+
 
             if shift_colorbar_labels_inward[Nfile]
                 shift_colorbar_label!(cb.ax, "left")
@@ -274,7 +296,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
     #gs.tight_layout(fig, pad = 0.0, h_pad = -10.0, w_pad= 0.0)
 
     @info "saving $plot_name"
-    savefig(plot_name, bbox_inches = "tight", transparent=transparent)
+    savefig(plot_name, bbox_inches = "tight", transparent=transparent, dpi=dpi)
 
     close(fig)
 

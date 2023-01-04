@@ -1,3 +1,7 @@
+using PyCall
+
+ticker = pyimport("matplotlib.ticker")
+
 """
     propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                             map_arr = nothing, par_arr = nothing,
@@ -327,10 +331,22 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
                 grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
                 grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
 
+                # if log_map[col]
+                #     #grid[(col-1)*Nrows+1].cax.xaxis.set_major_locator(plt.LogLocator(base=10, numticks=4))
+                # else
+                #     #grid[(col-1)*Nrows+1].cax.xaxis.set_major_locator(plt.LinearLocator(numticks=4))
+                #     grid[(col-1)*Nrows+1].cax.xaxis.set_major_locator(ticker.MaxNLocator(4))
+                #     #println(grid[(col-1)*Nrows+1].cax.get_xlim())
+                #     grid[(col-1)*Nrows+1].cax.xaxis.set_ticks([0.0, 1/3, 2/3, 1.0])
+                #     grid[(col-1)*Nrows+1].cax.xaxis.set_ticklabels(["-2.0", "-1.5", "-1.0", "-0.5"])
+                # end
+
                 if shift_colorbar_labels_inward[col]
                     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "left")
                     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
                 end
+
+                grid[(col-1)*Nrows+1].cax.xaxis.set_label_coords(0.5, 3.0)
             end
 
             for spine in values(ax.spines)

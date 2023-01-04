@@ -36,6 +36,8 @@ function get_colorbar_top(ax::PyCall.PyObject, im::PyCall.PyObject,
     cax.xaxis.set_ticks_position("top")
     cax.xaxis.set_label_position("top")
 
+    #cax.xaxis.set_major_locator(PyPlot.MaxNLocator(3))
+
     return cax
 end
 
@@ -59,12 +61,14 @@ function get_colorbar_left(ax::PyCall.PyObject, im::PyCall.PyObject,
     cb = colorbar(im, cax = cax)#, fraction=0.046, pad=0.5)#, cax=cbaxis1)
     cb.set_label(label, fontsize = axis_label_font_size)
     cb.ax.tick_params(
+        reset=true,
         direction = "in",
         which = "major",
         labelsize = tick_label_size,
         size = 6, width = 1
     )
     cb.ax.tick_params(
+        #reset=true,
         direction = "in",
         which = "minor",
         labelsize = tick_label_size,
@@ -109,8 +113,8 @@ function get_colorbar_right(ax::PyCall.PyObject, im::PyCall.PyObject,
         size = 3, width = 1
     )
 
-    cax.xaxis.set_ticks_position("right")
-    cax.xaxis.set_label_position("right")
+    # cax.xaxis.set_ticks_position("right")
+    # cax.xaxis.set_label_position("right")
 
     return cax
 end

@@ -77,13 +77,14 @@ function cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3,
                              tick_label_size::Int64=15, color::String="k")
 
     ax.tick_params( direction="in", labelsize=tick_label_size,
-                    which="major", size=size_minor_ticks<<1, 
+                    which="major", size=2size_minor_ticks, 
                     width=major_tick_width_scale*width_minor_ticks, color=color)
 
     ax.tick_params( direction="in", labelsize=tick_label_size,
-                    which="minor", size=size_minor_ticks, width=width_minor_ticks, color=color)
+                    which="minor", size=size_minor_ticks, 
+                    width=width_minor_ticks, color=color)
 
-    ax.minorticks_on()
+    #ax.minorticks_on()
 
     for spine in values(ax.spines)
         spine.set_edgecolor(color)

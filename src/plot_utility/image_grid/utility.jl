@@ -1,36 +1,3 @@
-function scale_annotation(ax, xmax, ymin, offset, length, width, scale_text, text_offset, annotation_color, fontsize = 15)
-
-    # Line 
-    ax.arrow(xmax - length - offset, ymin + offset, length, 0.0, width = width, color = annotation_color,
-        length_includes_head = true, head_width = 0.0)
-
-    # x label
-    text_x = xmax - 0.5 * length - offset
-    text_y = ymin + text_offset
-
-    ax.text(text_x, text_y, scale_text, color = annotation_color, fontsize = fontsize, horizontalalignment = "center", verticalalignment = "center")
-end
-
-
-function time_annotation(ax, xmin, ymax, offset, z_text, annotation_color)
-
-    # x label
-    text_x = xmin + offset
-    text_y = ymax - offset
-
-    ax.text(text_x, text_y, z_text, color = annotation_color, fontsize = 20, horizontalalignment = "left", verticalalignment = "top")
-end
-
-
-function text_annotation(ax, xmin, ymax, offset, z_text, annotation_color)
-
-    # x label
-    text_x = xmin - offset
-    text_y = ymax - offset
-
-    ax.text(text_x, text_y, z_text, color = annotation_color, fontsize = 20, horizontalalignment = "right", verticalalignment = "top")
-end
-
 
 function read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 

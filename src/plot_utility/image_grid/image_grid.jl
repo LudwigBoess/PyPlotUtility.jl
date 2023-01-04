@@ -1,3 +1,6 @@
+PE = pyimport("matplotlib.patheffects")
+
+
 """
     propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                             map_arr = nothing, par_arr = nothing,
@@ -76,7 +79,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 annotation_color = "w",
                                 colorbar_location="top",
                                 colorbar_mode="edge",
-                                grid_direction="column"
+                                grid_direction="column",
+                                cb_label_offset=0.0,
+                                dpi=400
                             )
 
 
@@ -87,7 +92,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
     end
 
     if colorbar_mode == "single"
-        colorbar_size = "2%"
+        colorbar_size = "3%"
     else
         colorbar_size = "7%"
     end
@@ -141,7 +146,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if !isnothing(cutoffs)
-                map[map.<cutoffs[Nfile]] .= NaN
+                map[map.<cutoffs[Nfile]] .= cutoffs[Nfile]
             end
 
             if colorbar_mode == "single"
@@ -271,6 +276,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                         color = cicle_color, fill = false, ls = "--", alpha=circle_alpha))
             end
 
+
             # draw smoothing beam
             if smooth_col[col] || smooth_contour_col[col] || annotate_smoothing[col]
                 pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
@@ -307,12 +313,14 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
                 cb.set_label(cb_labels[selected], fontsize = axis_label_font_size)
                 cb.ax.tick_params(
+                    reset=true,
                     direction = "in",
                     which = "major",
                     labelsize = tick_label_size,
                     size = 6, width = 1
                 )
                 cb.ax.tick_params(
+                    reset=true,
                     direction = "in",
                     which = "minor",
                     labelsize = tick_label_size,
@@ -326,7 +334,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
                 end
 
-
+                grid[(col-1)*Nrows+1].cax.xaxis.set_label_coords(0.5, 2.0+cb_label_offset)
             end
 
             for spine in values(ax.spines)
@@ -339,8 +347,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
     end
 
+
+
     @info "saving $plot_name"
-    savefig(plot_name, bbox_inches = "tight", transparent=transparent)
+    savefig(plot_name, bbox_inches = "tight", transparent=transparent, dpi=dpi)
 
     close(fig)
 

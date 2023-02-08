@@ -1,6 +1,5 @@
 PE = pyimport("matplotlib.patheffects")
 
-
 """
     propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                             map_arr = nothing, par_arr = nothing,
@@ -48,7 +47,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 smooth_file = falses(Nrows*Ncols),
                                 smooth_sizes = 0.0,
                                 annotate_smoothing = falses(Nrows*Ncols),
-                                smooth_col = falses(Ncols),
+                                smooth_col=falses(Nrows*Ncols),
                                 streamline_files = nothing,
                                 streamlines = falses(Nrows*Ncols),
                                 contour_files = nothing,
@@ -70,7 +69,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 r_circles = nothing,
                                 cicle_color = "w",
                                 circle_alpha = 0.5,
-                                smooth_contour_col = falses(Ncols),
+                                smooth_contour_col=falses(Nrows*Ncols),
                                 shift_colorbar_labels_inward = trues(Nrows*Ncols),
                                 upscale = Ncols,
                                 read_mode = 1,
@@ -137,6 +136,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             # read map and parameters
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 
+
             if smooth_file[Nfile]
                 smooth_map!(map, smooth_sizes[Nfile], par)
             end
@@ -191,7 +191,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 map, par = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
 
                 if smooth_contour_file[Nfile]
-                    map = smooth_map!(map, smooth_sizes[col], par)
+                    map = smooth_map!(map, smooth_sizes[Nfile], par)
                 end
 
 
@@ -278,14 +278,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
 
             # draw smoothing beam
-            if smooth_col[col] || smooth_contour_col[col] || annotate_smoothing[col]
+            if smooth_col[Nfile] || smooth_contour_col[col] || annotate_smoothing[col]
                 pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-                smooth_pixel    = smooth_sizes[col] ./ pixelSideLength
-
-                # ax.add_artist(matplotlib.patches.Rectangle((0.1par.Npixels[1] - 1.5*smooth_pixel[1],0.1par.Npixels[1] - 1.5*smooth_pixel[2]),           # anchor
-                #                                             3*smooth_pixel[1], # width
-                #                                             3*smooth_pixel[2], # height
-                #                                             linewidth=1,edgecolor="gray",facecolor="gray"))
+                smooth_pixel = smooth_sizes[Nfile] ./ pixelSideLength
 
                 ax.add_artist(matplotlib.patches.Ellipse((0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2],
                     color = "w", fill = true, ls = "-"))
@@ -295,32 +290,39 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if i == 1 || ((i == Nrows))
 
-                # if colorbar_single
-                #     if !(i == 1 || ((i == Nrows) && colorbar_bottom))
-                #         Nfile += 1
-                #         continue
-                #     end
-                #     #cax,kw = make_axes([grid[cax_i].cax for cax_i ∈ 1:Ncols])
-                #     cb = colorbar(im, cax = grid[1], orientation = colorbar_orientation)
-                # else
+                if colorbar_mode == "single"
+                    if !(i == 1 || ((i == Nrows) && colorbar_bottom))
+                        Nfile += 1
+                        continue
+                    end
+                    #cax,kw = make_axes([grid[cax_i].cax for cax_i ∈ 1:Ncols])
+                    cb = colorbar(im, cax = grid[1], orientation = colorbar_orientation)
+                else
                     cb = colorbar(im, cax = grid[(col-1)*Nrows+1].cax, orientation = colorbar_orientation)
                     
+                    #println("shifting labels")
                     if shift_colorbar_labels_inward[col]
+                        println("shifting labels")
+
                         shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "left")
                         shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
                     end
-                #end
+                    # if shift_colorbar_labels_inward[col]
+                    #     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "t")
+                    #     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "b")
+                    # end
+                end
 
                 cb.set_label(cb_labels[selected], fontsize = axis_label_font_size)
                 cb.ax.tick_params(
-                    reset=true,
+                    #reset=true,
                     direction = "in",
                     which = "major",
                     labelsize = tick_label_size,
                     size = 6, width = 1
                 )
                 cb.ax.tick_params(
-                    reset=true,
+                    #reset=true,
                     direction = "in",
                     which = "minor",
                     labelsize = tick_label_size,

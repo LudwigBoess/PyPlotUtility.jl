@@ -44,6 +44,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 map_arr = nothing, par_arr = nothing,
                                 contour_arr = nothing, contour_par_arr = nothing,
                                 log_map = trues(Nrows*Ncols),
+                                colorbar_bottom=false,
                                 smooth_file = falses(Nrows*Ncols),
                                 smooth_sizes = 0.0,
                                 annotate_smoothing = falses(Nrows*Ncols),
@@ -136,7 +137,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             # read map and parameters
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 
-
             if smooth_file[Nfile]
                 smooth_map!(map, smooth_sizes[Nfile], par)
             end
@@ -172,7 +172,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if log_map[selected]
-
                 im = ax.imshow(map, norm = matplotlib.colors.LogNorm(),
                     vmin = vmin_arr[selected], vmax = vmax_arr[selected],
                     cmap = im_cmap[selected],
@@ -288,6 +287,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             ax.set_axis_off()
 
+            # add colorbar
             if i == 1 || ((i == Nrows))
 
                 if colorbar_mode == "single"
@@ -296,9 +296,12 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                         continue
                     end
                     #cax,kw = make_axes([grid[cax_i].cax for cax_i ∈ 1:Ncols])
-                    cb = colorbar(im, cax = grid[1], orientation = colorbar_orientation)
+                    cax = grid.cbar_axes[1]
+                    cb = colorbar(im, cax=cax, orientation=colorbar_orientation)
+
                 else
-                    cb = colorbar(im, cax = grid[(col-1)*Nrows+1].cax, orientation = colorbar_orientation)
+                    cax = grid[(col-1)*Nrows+1].cax
+                    cb = colorbar(im, cax = cax, orientation = colorbar_orientation)
                     
                     #println("shifting labels")
                     if shift_colorbar_labels_inward[col]
@@ -328,7 +331,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     labelsize = tick_label_size,
                     size = 3, width = 1
                 )
-                # cb_ticks_styling!(cb.ax, color=ticks_color)
+                cb_ticks_styling!(cb.ax, color=ticks_color)
 
 
                 if colorbar_location == "top"
@@ -336,7 +339,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
                 end
 
-                grid[(col-1)*Nrows+1].cax.xaxis.set_label_coords(0.5, 2.0+cb_label_offset)
+                cax.xaxis.set_label_coords(0.5, 2.0+cb_label_offset)
             end
 
             for spine in values(ax.spines)

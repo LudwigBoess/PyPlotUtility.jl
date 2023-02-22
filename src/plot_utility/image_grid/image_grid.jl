@@ -172,8 +172,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if log_map[selected]
-                im = ax.imshow(map, norm = matplotlib.colors.LogNorm(),
-                    vmin = vmin_arr[selected], vmax = vmax_arr[selected],
+                im = ax.imshow(map, norm=matplotlib.colors.LogNorm(vmin=vmin_arr[selected], vmax=vmax_arr[selected]),
                     cmap = im_cmap[selected],
                     origin = "lower"
                 )
@@ -317,21 +316,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 end
 
                 cb.set_label(cb_labels[selected], fontsize = axis_label_font_size)
-                cb.ax.tick_params(
-                    #reset=true,
-                    direction = "in",
-                    which = "major",
-                    labelsize = tick_label_size,
-                    size = 6, width = 1
-                )
-                cb.ax.tick_params(
-                    #reset=true,
-                    direction = "in",
-                    which = "minor",
-                    labelsize = tick_label_size,
-                    size = 3, width = 1
-                )
-                cb_ticks_styling!(cb.ax, color=ticks_color)
+
+                cb_ticks_styling!(cb, color=ticks_color)
 
 
                 if colorbar_location == "top"

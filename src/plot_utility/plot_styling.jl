@@ -36,6 +36,17 @@ function plot_styling!( x_pixels::Int64 = 600;
 end
 
 """
+    color_spines(ax::PyCall.PyObject)
+
+Changes the color accross all spines.
+"""
+function color_spines(ax::PyCall.PyObject, color::String)
+    for spine ∈ ["top", "bottom", "left", "right"]
+        ax.spines[spine].set_edgecolor(color)
+    end
+end
+
+"""
     axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=6, 
                         width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
                         tick_label_size::Int64=15, color::String="k")
@@ -55,10 +66,7 @@ function axis_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3,
 
     ax.minorticks_on()
 
-    for spine in values(ax.spines)
-        spine.set_edgecolor(color)
-    end
-
+    color_spines(ax, color)
 
     return ax
 
@@ -72,25 +80,23 @@ end
 
 LMB default colorbar tick styling.
 """
-function cb_ticks_styling!(ax::PyCall.PyObject; size_minor_ticks::Int64=3, 
+function cb_ticks_styling!(cb::PyCall.PyObject; size_minor_ticks::Int64=3, 
                              width_minor_ticks::Int64=1, major_tick_width_scale::Int64=1,
                              tick_label_size::Int64=15, color::String="k")
 
-    ax.tick_params( direction="in", labelsize=tick_label_size,
+    cb.ax.tick_params(direction="in", labelsize=tick_label_size,
                     which="major", size=2size_minor_ticks, 
                     width=major_tick_width_scale*width_minor_ticks, color=color)
 
-    ax.tick_params( direction="in", labelsize=tick_label_size,
+    cb.ax.tick_params(direction="in", labelsize=tick_label_size,
                     which="minor", size=size_minor_ticks, 
                     width=width_minor_ticks, color=color)
 
-    #ax.minorticks_on()
+    cb.ax.minorticks_on()
 
-    for spine in values(ax.spines)
-        spine.set_edgecolor(color)
-    end
+    cb.outline.set_edgecolor(color)
 
-    return ax
+    return cb
 end
 
 

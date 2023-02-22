@@ -165,8 +165,7 @@ function propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_a
 
             if log_map[col]
 
-                im = ax.imshow(map, norm = matplotlib.colors.LogNorm(),
-                    vmin = vmin_arr[col], vmax = vmax_arr[col],
+                im = ax.imshow(map, norm=matplotlib.colors.LogNorm(vmin=vmin_arr[col], vmax=vmax_arr[col]),
                     cmap = im_cmap[col],
                     origin = "lower"
                 )

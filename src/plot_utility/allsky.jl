@@ -39,7 +39,8 @@ function plot_single_allsky(filename::String,
                             contour_alpha::Real=0.8,
                             contour_linestyle::String="dotted",
                             annotations=nothing,
-                            dpi=400)
+                            dpi=400,
+                            origin="lower")
 
 
     # read healpix image
@@ -86,16 +87,15 @@ function plot_single_allsky(filename::String,
     end
 
     if log_map
-        im = ax.imshow(image, norm = matplotlib.colors.LogNorm(),
-                       vmin = clim[1], vmax = clim[2],
+        im = ax.imshow(image, norm=matplotlib.colors.LogNorm(vmin=clim[1], vmax=clim[2]),
                        cmap = im_cmap,
-                       origin = "upper"
+                       origin = origin
                       )
     else
         im = ax.imshow(image,
                        vmin = clim[1], vmax = clim[2],
                        cmap = im_cmap,
-                       origin = "upper"
+                        origin=origin
                         )
     end
 
@@ -141,14 +141,12 @@ function plot_single_allsky(filename::String,
 
     cb.set_label(cb_label)
 
-    cb_ticks_styling!(cb.ax, color=ticks_color)
+    cb_ticks_styling!(cb, color=ticks_color)
 
     cb.ax.xaxis.set_ticks_position("top")
     cb.ax.xaxis.set_label_position("top")
 
-    for spine in values(cb.ax.spines)
-        spine.set_edgecolor(ticks_color)
-    end
+    #color_spines(cb.ax, ticks_color)
 
     cb.ax.xaxis.set_label_coords(0.5, 2.5)
 

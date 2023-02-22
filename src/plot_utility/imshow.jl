@@ -61,6 +61,6 @@ function get_imshow_log(ax::PyCall.PyObject, image::Array{<:Real},
                         cmap::String="viridis", ticks_color::String="white", 
                         interpolation::String="none")
 
-    return get_imshow(ax, image, x_lim, y_lim, vmin, vmax, cmap=cmap, cnorm=matplotlib.colors.LogNorm(), 
+    return get_imshow(ax, image, x_lim, y_lim, vmin, vmax, cmap=cmap, cnorm=matplotlib.colors.LogNorm(;vmin, vmax),
                       ticks_color=ticks_color, interpolation=interpolation)
 end

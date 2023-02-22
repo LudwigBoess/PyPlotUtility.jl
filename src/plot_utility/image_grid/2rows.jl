@@ -114,8 +114,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             if log_map[Nfile]
 
-                im = ax.imshow(map, norm = matplotlib.colors.LogNorm(),
-                    vmin = vmin_arr[Nfile], vmax = vmax_arr[Nfile],
+                im = ax.imshow(map, norm = matplotlib.colors.LogNorm(vmin=vmin_arr[Nfile], vmax = vmax_arr[Nfile]),
                     cmap = im_cmap[Nfile],
                     origin = "lower"
                 )
@@ -262,22 +261,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             #cb.ax.xaxis.set_major_locator(plt.MaxNLocator(4))
 
-            #cb.ax.minorticks_on()
-
-            cb.ax.tick_params(
-                direction = "in",
-                which = "major",
-                size = 6, width = 1
-            )
-            cb.ax.tick_params(
-                direction = "in",
-                which = "minor",
-                size = 3, width = 1
-            )
-
-            #cb_ticks_styling!(cb.ax, color=ticks_color)
-
-            
+            cb_ticks_styling!(cb, color=ticks_color)
 
             cb.ax.xaxis.set_ticks_position(loc)
             cb.ax.xaxis.set_label_position(loc)

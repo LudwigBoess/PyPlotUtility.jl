@@ -46,6 +46,7 @@ module PyPlotUtility
             propaganda_plot_rows,
             propaganda_plot_double_row,
             plot_single_allsky,
+            plot_multiple_allsky,
             plot_image_grid
 
 end # module

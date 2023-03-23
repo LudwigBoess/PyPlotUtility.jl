@@ -1,7 +1,7 @@
 PE = pyimport("matplotlib.patheffects")
 
 """
-    propaganda_plot_columns(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
+    plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax_arr, plot_name;
                             map_arr = nothing, par_arr = nothing,
                             contour_arr = nothing, contour_par_arr = nothing,
                             log_map = trues(Ncols),
@@ -92,7 +92,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
     end
 
     if colorbar_mode == "single"
-        colorbar_size = "3%"
+        colorbar_size = "2%"
     else
         colorbar_size = "7%"
     end
@@ -138,7 +138,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
 
             if smooth_file[Nfile]
-                smooth_map!(map, smooth_sizes[Nfile], par)
+                map = smooth_map!(map, smooth_sizes[Nfile], par)
             end
 
             if smooth_col[col]
@@ -294,7 +294,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                         Nfile += 1
                         continue
                     end
-                    #cax,kw = make_axes([grid[cax_i].cax for cax_i ∈ 1:Ncols])
                     cax = grid.cbar_axes[1]
                     cb = colorbar(im, cax=cax, orientation=colorbar_orientation)
 
@@ -304,8 +303,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     
                     #println("shifting labels")
                     if shift_colorbar_labels_inward[col]
-                        println("shifting labels")
-
                         shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "left")
                         shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
                     end
@@ -326,10 +323,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 end
 
                 cax.xaxis.set_label_coords(0.5, 2.0+cb_label_offset)
-            end
-
-            for spine in values(ax.spines)
-                spine.set_edgecolor(ticks_color)
             end
 
             # count up file

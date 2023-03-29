@@ -33,7 +33,8 @@ function read_map_par(read_mode, Nfile, files, map_arr, par_arr)
         par = par_arr[Nfile]
     end
 
-    return map, par
+    # transpose map to match imshow and scatter
+    return map', par
 end
 
 function smooth_map!(map, smooth_size, par)

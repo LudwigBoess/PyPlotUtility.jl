@@ -223,11 +223,23 @@ function plot_multiple_allsky(filenames::Vector{String},
         contour_image, mask, maskflag = project(mollweideprojinv, c_m, 2Npixels, Npixels)
     end
 
-    fig = get_figure(1.9, x_pixels=upscale * 300)
+    height_ratios = ones(Nrows+1)
+    height_ratios[1] = 0.08
+
+    if Nrows == 2
+        fig_scale = 1.9
+    elseif Nrows == 3
+        fig_scale = 1.3
+    else
+        fig_scale = 1
+    end
+
+
+    fig = get_figure(fig_scale, x_pixels=upscale * 300)
     plot_styling!(upscale * 300, axis_label_font_size=upscale * 4, 
                 legend_font_size=5, color=ticks_color)
     gs = plt.GridSpec(1 + Nrows, 4*Ncols, figure=fig,
-        height_ratios=[0.08, 1, 1], hspace=0.05, wspace=0.0 )
+        height_ratios=height_ratios, hspace=0.05, wspace=0.0 )
 
 
     Nfile = 1

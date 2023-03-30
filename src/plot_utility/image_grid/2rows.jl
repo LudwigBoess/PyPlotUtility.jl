@@ -48,11 +48,11 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 streamlines = falses(2Ncols),
                                 contour_files = nothing,
                                 contours = falses(2Ncols),
-                                contour_levels = nothing,
+                                contour_level_values=nothing,
                                 contour_color = "white",
                                 smooth_contour_file = falses(2Ncols),
                                 alpha_contours = ones(2Ncols),
-                                cutoffs = nothing,
+                                cutoffs=vmin_arr,
                                 mask_bad = trues(2Ncols),
                                 bad_colors = ["k" for _ = 1:2Ncols],
                                 annotate_time = falses(2Ncols),
@@ -106,10 +106,13 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             end
 
             if mask_bad[Nfile]
-                # get colormap object
-                cmap = plt.get_cmap(im_cmap[Nfile])
-                # set invalid pixels to bad color
-                cmap.set_bad(bad_colors[Nfile])
+                # # get colormap object
+                # cmap = plt.get_cmap(im_cmap[Nfile])
+                # # set invalid pixels to bad color
+                # cmap.set_bad(bad_colors[Nfile])
+
+                map[findall(isnan.(map))] .= vmin_arr[Nfile]
+                map[findall(isinf.(map))] .= vmin_arr[Nfile]
             end
 
             if log_map[Nfile]
@@ -128,17 +131,17 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
             if contours[Nfile]
 
-                par, map = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
+                map, par = read_map_par(read_mode, Nfile, contour_files, contour_arr, contour_par_arr)
 
 
                 if smooth_contour_file[Nfile]
                     smooth_map!(map, smooth_sizes[Nfile], par)
                 end
 
-                if isnothing(contour_levels)
+                if isnothing(contour_level_values)
                     ax.contour(map, colors = contour_color, linewidth = 1.2, linestyle = "--", alpha = alpha_contours[col])
                 else
-                    ax.contour(map, contour_levels, colors = contour_color, linewidth = 1.2, linestyle = "--", alpha = alpha_contours[col])
+                    ax.contour(map, contour_level_values, colors=contour_color, linewidth=1.2, linestyle="--", alpha=alpha_contours[col])
                 end
 
                 Ncontour += 1
@@ -220,10 +223,6 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             end
 
             ax.set_axis_off()
-
-            for spine in values(ax.spines)
-                spine.set_edgecolor(ticks_color)
-            end
 
             if row == 1
                 loc = "top"

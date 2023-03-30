@@ -84,10 +84,10 @@ function bin_1D(bin_quantity, bin_lim, count_quantity=nothing;
 
         if !calc_sigma
             # return mean quantity
-            return sum_quantity
+            return count, sum_quantity
         else
             # return mean quantity and sigma
-            return sum_quantity, sigma
+            return count, sum_quantity, sigma
         end
     end    
 end

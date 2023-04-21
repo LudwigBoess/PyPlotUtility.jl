@@ -75,9 +75,20 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 dpi=400
                             )
 
+    if Ncols == 2
+        aspect_ratio = 0.947
+        axis_label_font_size = 10
+        legend_font_size = 7
+    elseif Ncols == 3
+        aspect_ratio = 1.42
+        axis_label_font_size=8
+        legend_font_size=5
+    elseif Ncols == 4
+        aspect_ratio = 1.89
+    end
 
-    fig = get_figure( aspect_ratio , x_pixels = upscale*300)
-    plot_styling!(upscale*300, axis_label_font_size=8, legend_font_size=5, color=ticks_color)
+    fig = get_figure( aspect_ratio, x_pixels = upscale*300)
+    plot_styling!(upscale * 300, color=ticks_color; axis_label_font_size, legend_font_size)
 
     gs = plt.GridSpec(4, Ncols, figure = fig, 
                       width_ratios = ones(Ncols), wspace = 0.0,
@@ -265,7 +276,6 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             cb.ax.xaxis.set_ticks_position(loc)
             cb.ax.xaxis.set_label_position(loc)
 
-
             if shift_colorbar_labels_inward[Nfile]
                 shift_colorbar_label!(cb.ax, "left")
                 shift_colorbar_label!(cb.ax, "right")
@@ -278,6 +288,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
     #gs.tight_layout(fig, pad = 0.0, h_pad = -10.0, w_pad= 0.0)
 
+    
     @info "saving $plot_name"
     savefig(plot_name, bbox_inches = "tight", transparent=transparent, dpi=dpi)
 

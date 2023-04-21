@@ -128,11 +128,11 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
     
     for col = 1:Ncols
 
-        for i = 1:Nrows
+        for row = 1:Nrows
 
-            @info "Column $col, Plot $i"
+            @info "Column $col, Plot $row"
 
-            ax = grid[(col-1)*Nrows+i]
+            ax = grid[(col-1)*Nrows+row]
 
             # read map and parameters
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
@@ -146,7 +146,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if !isnothing(cutoffs)
-                map[map.<cutoffs[Nfile]] .= cutoffs[Nfile]
+                map[map.<cutoffs[col]] .= cutoffs[col]
             end
 
             if colorbar_mode == "single"
@@ -227,7 +227,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             #         annotate_now = true
             #     end
             # else
-            #     if i == 1
+            #     if row == 1
             #         annotate_now = true
             #     end
             # end
@@ -241,7 +241,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 # annotate_arrows(ax, 1.0, 1.0, 300.0/4.0, 500.0/4.0, 
                 # 		x_arrow_text[i], y_arrow_text[i], 200.0/4.0)
 
-                if annotate_scale[i]
+                if annotate_scale[Nfile]
                     # annotate_scale(ax, par.Npixels[1], 1.0, 300.0/4.0, 1000.0/pixelSideLength, 
                     # 	L"1 \: h^{-1} c" * "Mpc", 500.0/4.0)
 
@@ -287,10 +287,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             ax.set_axis_off()
 
             # add colorbar
-            if i == 1 || ((i == Nrows))
+            if row == 1 || ((row == Nrows))
 
                 if colorbar_mode == "single"
-                    if !(i == 1 || ((i == Nrows) && colorbar_bottom))
+                    if !(row == 1 || ((row == Nrows) && colorbar_bottom))
                         Nfile += 1
                         continue
                     end
@@ -303,8 +303,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     
                     #println("shifting labels")
                     if shift_colorbar_labels_inward[col]
-                        shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "left")
-                        shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "right")
+                        shift_colorbar_label!(cax, "left")
+                        shift_colorbar_label!(cax, "right")
                     end
                     # if shift_colorbar_labels_inward[col]
                     #     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "t")

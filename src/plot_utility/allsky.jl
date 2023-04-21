@@ -1,4 +1,6 @@
 using Healpix
+using Unitful, UnitfulAstro
+
 
 """
     plot_single_allsky( filename::String, 
@@ -47,10 +49,10 @@ function plot_single_allsky(filename::String,
     # read healpix image
     m = Healpix.readMapFromFITS(filename, 1, Float64)
 
+    println(maximum(m))
+
     if per_sr
-        Nside = npix2nside(length(m))
-        res = Resolution(Nside)
-        sr = (2 * max_pixrad(res))^2
+        sr = 4π / length(m)
         m ./= sr
     end
     
@@ -61,9 +63,7 @@ function plot_single_allsky(filename::String,
     if mask_bad 
         m[findall(isnan.(m[:]))] .= clim[1]
         m[findall(isinf.(m[:]))] .= clim[1]
-    end
-
-    
+    end    
     
     # construct 2D array by deprojecting
     image, mask, maskflag = project(mollweideprojinv, m, 2Npixels, Npixels, 
@@ -76,6 +76,7 @@ function plot_single_allsky(filename::String,
     if !isnothing(contour_file)
         # read healpix image
         c_m = Healpix.readMapFromFITS(contour_file, 1, Float64)
+
         # construct 2D array by deprojecting
         contour_image, mask, maskflag = project(mollweideprojinv, c_m, 2Npixels, Npixels)
     end
@@ -111,14 +112,16 @@ function plot_single_allsky(filename::String,
                         )
     end
 
+    println("before contours")
     # add contours if requested
     if !isnothing(contour_file)
+        println("contours")
         ax.contour(contour_image,
                     levels = contour_levels,
                     alpha = contour_alpha,
                     colors = contour_color,
                     linestyles = contour_linestyle,
-                    origin = "lower"
+                    origin=origin
                     )
     end
 
@@ -206,6 +209,9 @@ function plot_multiple_allsky(filenames::Vector{String},
                             transparent::Bool=false,
                             smooth_image::Bool=false,
                             smooth_size::Real=2.0,
+                            per_sr::Bool=false,
+                            per_beam::Bool=false,
+                            beam_size=5.0, # in arcsec
                             contour_file=nothing,
                             contour_levels::Vector{<:Real}=[0.5, 1.0],
                             contour_color::String="w",
@@ -236,7 +242,7 @@ function plot_multiple_allsky(filenames::Vector{String},
 
 
     fig = get_figure(fig_scale, x_pixels=upscale * 300)
-    plot_styling!(upscale * 300, axis_label_font_size=upscale * 4, 
+    plot_styling!(upscale * 300, axis_label_font_size=12, 
                 legend_font_size=5, color=ticks_color)
     gs = plt.GridSpec(1 + Nrows, 4*Ncols, figure=fig,
         height_ratios=height_ratios, hspace=0.05, wspace=0.0 )
@@ -261,6 +267,18 @@ function plot_multiple_allsky(filenames::Vector{String},
 
         # read healpix image
         m = Healpix.readMapFromFITS(filenames[Nfile], 1, Float64)
+
+        if per_sr
+            sr = 4π / length(m)
+            m ./= sr
+        end
+
+        if per_beam
+            pixel_area = 4π / length(m)
+            beam_area = π * beam_size^2 |> u"sr"
+            factor = pixel_area / beam_area |> u"sr" |> ustrip
+            m .*= factor
+        end
 
         if !isnothing(cutoff)
             m[m[:].<cutoff] .= NaN
@@ -364,9 +382,7 @@ function plot_multiple_allsky(filenames::Vector{String},
     cb.ax.xaxis.set_ticks_position("top")
     cb.ax.xaxis.set_label_position("top")
 
-    #color_spines(cb.ax, ticks_color)
-
-    cb.ax.xaxis.set_label_coords(0.5, 2.5)
+    cb.ax.xaxis.set_label_coords(0.5, 2.8)
 
     subplots_adjust(hspace=0.0, wspace=0.0)
 

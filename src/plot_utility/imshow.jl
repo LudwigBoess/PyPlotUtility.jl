@@ -12,7 +12,7 @@ Helper function to plot an `imshow` with linear colorbar.
 function get_imshow(ax::PyCall.PyObject, image::Array{<:Real}, 
                     x_lim::Array{<:Real}=zeros(2), y_lim::Array{<:Real}=zeros(2), 
                     vmin::Real=0.0, vmax::Real=0.0; 
-                    cmap::String="viridis", cnorm=matplotlib.colors.NoNorm(),
+    cmap::String="viridis", cnorm=matplotlib.colors.NoNorm(; vmin, vmax),
                     ticks_color::String="white",
                     interpolation::String="none")
 
@@ -27,7 +27,6 @@ function get_imshow(ax::PyCall.PyObject, image::Array{<:Real},
     end
     
     im = ax.imshow(image, norm=cnorm,
-                    vmin=vmin, vmax=vmax, 
                     cmap = cmap,
                     origin="lower",
                     extent= [x_lim[1],
@@ -37,9 +36,7 @@ function get_imshow(ax::PyCall.PyObject, image::Array{<:Real},
                     interpolation=interpolation
                         )
 
-    for spine in values(ax.spines)
-        spine.set_edgecolor(ticks_color)
-    end
+    color_spines(ax, ticks_color)
 
     return im
 end

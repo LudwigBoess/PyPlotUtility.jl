@@ -51,9 +51,7 @@ function get_z_secondary_axis!(ax::PyCall.PyObject,
                     which="major", size=6, 
                     width=1, color=color)
 
-    for spine ∈ values(ax2.spines)
-        spine.set_edgecolor(color)
-    end
+    color_spines(ax2, color)
 
     return ax2
 end
@@ -114,9 +112,7 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
 
     ax2.tick_params(color=color, labelcolor=color)
 
-    for spine ∈ values(ax2.spines)
-        spine.set_edgecolor(color)
-    end
+    color_spines(ax2, color)
 
     return ax2
 

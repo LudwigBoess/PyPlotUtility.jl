@@ -21,7 +21,7 @@ function read_map_par(read_mode, Nfile, files, map_arr, par_arr)
                 Npixels = smac1_info.boxsize_pix)
 
         elseif read_mode == 3
-            map = read_smac2_image(image_name, image_num[Nfile])
+            map = read_smac2_image(image_name, 1)
             par = read_smac2_info(image_name)
             
         elseif read_mode == 4
@@ -39,7 +39,44 @@ end
 
 function smooth_map!(map, smooth_size, par)
     pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
-    smooth_pixel    = smooth_size ./ pixelSideLength ./ 2
+    smooth_pixel = smooth_size ./ pixelSideLength ./ 2
     map = imfilter(map, reflect(Kernel.gaussian((smooth_pixel[1], smooth_pixel[2]), (par.Npixels[1] - 1, par.Npixels[1] - 1))))
     return map
+end
+
+
+function get_contours(contour_map, r, par, i_circle)
+
+    for i = 1:par.Npixels[1], j = 1:par.Npixels[2]
+        r_map = √((i-0.5par.Npixels[1])^2 + (j-0.5par.Npixels[2])^2)
+        if r_map <= r 
+            contour_map[i,j] = i_circle
+        end
+    end
+
+    contour_map
+end
+
+function get_circle_contours(ax, r_circles, circle_labels, circle_alpha, circle_lines, par)
+
+    pixelSideLength = (par.x_lim[2] - par.x_lim[1]) / par.Npixels[1]
+
+    contour_map = zeros(par.Npixels[1], par.Npixels[2])
+
+    sorted = reverse(sortperm(r_circles))
+
+    for i = 1:length(r_circles)
+        # circle radius in pixel units
+        r = r_circles[sorted[i]] / pixelSideLength
+
+        contour_map = get_contours(contour_map, r, par, circle_labels[sorted[i]])
+    end
+
+    CS = ax.contour(collect(1:par.Npixels[1]), collect(1:par.Npixels[2]), 
+        contour_map, levels=circle_labels,
+                    colors="w", alpha=circle_alpha, linestyles=circle_lines)
+
+    ax.clabel(CS, CS.levels, inline=true, fmt=circle_labels[sorted])
+
+    return ax
 end

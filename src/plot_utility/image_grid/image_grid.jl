@@ -68,8 +68,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 scale_label = L"1 \: h^{-1} c" * "Mpc",
                                 scale_kpc = 1000.0,
                                 r_circles = nothing,
-                                cicle_color = "w",
+                                circle_color = "w",
                                 circle_alpha = 0.5,
+                                circle_lines = [":", "--", "-.", "_"],
                                 smooth_contour_col=falses(Nrows*Ncols),
                                 shift_colorbar_labels_inward = trues(Nrows*Ncols),
                                 upscale = Ncols,
@@ -81,7 +82,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                                 colorbar_mode="edge",
                                 grid_direction="column",
                                 cb_label_offset=0.0,
-                                dpi=400
+                                dpi=400,
+                                overplotting_functions=nothing
                             )
 
 
@@ -125,7 +127,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
     Nfile = 1
     Ncontour = 1
     time_label_num = 1
-    
+
+
     for col = 1:Ncols
 
         for row = 1:Nrows
@@ -136,6 +139,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             # read map and parameters
             map, par = read_map_par(read_mode, Nfile, files, map_arr, par_arr)
+
+            println("Maximum value of map: ", maximum(map))
+            println("Minimum value of map: ", minimum(map))
 
             if smooth_file[Nfile]
                 map = smooth_map!(map, smooth_sizes[Nfile], par)
@@ -196,6 +202,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 if isnothing(contour_levels)
                     ax.contour(map, colors = contour_color, linewidth = 1.2, linestyle = "--", alpha = alpha_contours[selected])
                 else
+                    map[map.<contour_levels[1]] .= contour_levels[1]
+                    map[isnan.(map)] .= contour_levels[1]
+                    map[isinf.(map)] .= contour_levels[1]
                     ax.contour(map, contour_levels, colors = contour_color, linewidth = 1.2, linestyle = "--", alpha = alpha_contours[selected])
                 end
 
@@ -218,6 +227,11 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 )
 
                 Ncontour += 1
+            end
+
+            # additional overplotting by custom functions
+            if !isnothing(overplotting_functions)
+                overplotting_functions[Nfile](ax)
             end
 
             annotate_now = true
@@ -269,9 +283,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if !isnothing(r_circles)
                 ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
-                        color = cicle_color, fill = false, ls = ":", alpha=circle_alpha))
-                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
-                        color = cicle_color, fill = false, ls = "--", alpha=circle_alpha))
+                        color = circle_color, fill = false, ls = ":", alpha=circle_alpha))
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[2] / pixelSideLength,
+                        color = circle_color, fill = false, ls = "--", alpha=circle_alpha))
+                #ax = get_circle_contours(ax, r_circles, circle_labels, circle_alpha, circle_lines, par)
             end
 
 

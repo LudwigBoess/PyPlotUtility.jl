@@ -72,7 +72,8 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 ticks_color = "k",
                                 N_ticks = zeros(Int64, 2Ncols),
                                 annotation_color = "w",
-                                dpi=400
+                                dpi=400,
+                                overplotting_functions=nothing
                             )
 
     if Ncols == 2
@@ -215,7 +216,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
             if !isnothing(r_circles)
                 ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
                         color = "w", fill = false, ls = ":", alpha=0.5))
-                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[1] / pixelSideLength,
+                ax.add_artist(plt.Circle((0.5par.Npixels[1], 0.5par.Npixels[2]), r_circles[2] / pixelSideLength,
                         color = "w", fill = false, ls = "--", alpha=0.5))
             end
 
@@ -231,6 +232,11 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
 
                 ax.add_artist(matplotlib.patches.Ellipse((0.1par.Npixels[1], 0.1par.Npixels[2]), smooth_pixel[1], smooth_pixel[2],
                     color = "w", fill = true, ls = "-"))
+            end
+
+            # additional overplotting by custom functions
+            if !isnothing(overplotting_functions)
+                overplotting_functions[Nfile](ax)
             end
 
             ax.set_axis_off()

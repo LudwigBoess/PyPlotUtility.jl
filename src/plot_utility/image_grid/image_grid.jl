@@ -311,7 +311,6 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     end
                     cax = grid.cbar_axes[1]
                     cb = colorbar(im, cax=cax, orientation=colorbar_orientation)
-
                 else
                     cax = grid[(col-1)*Nrows+1].cax
                     cb = colorbar(im, cax = cax, orientation = colorbar_orientation)
@@ -331,6 +330,14 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
                 cb_ticks_styling!(cb, color=ticks_color)
 
+                if log_map[selected]
+                    locmin = plt.LogLocator(base=10.0, subs=(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks=20)
+                    cb.ax.xaxis.set_minor_locator(locmin)
+                    cb.ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+                    locmaj = matplotlib.ticker.LogLocator(base=10, numticks=12)
+                    cb.ax.xaxis.set_major_locator(locmaj)
+                end
 
                 if colorbar_location == "top"
                     grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")

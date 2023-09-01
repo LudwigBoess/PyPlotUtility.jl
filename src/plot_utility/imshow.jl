@@ -12,7 +12,7 @@ Helper function to plot an `imshow` with linear colorbar.
 function get_imshow(ax::PyCall.PyObject, image::Array{<:Real}, 
                     x_lim::Array{<:Real}=zeros(2), y_lim::Array{<:Real}=zeros(2), 
                     vmin::Real=0.0, vmax::Real=0.0; 
-    cmap::String="viridis", cnorm=matplotlib.colors.NoNorm(; vmin, vmax),
+                    cmap="viridis", cnorm=matplotlib.colors.NoNorm(; vmin, vmax),
                     ticks_color::String="white",
                     interpolation::String="none")
 

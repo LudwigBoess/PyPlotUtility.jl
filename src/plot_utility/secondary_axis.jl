@@ -78,9 +78,9 @@ function get_cr_energy_axis!(ax::PyCall.PyObject, CR_type::String="p";
         mass   = mp 
         factor = 1.e-9
     elseif CR_type == "e"
-        label  = "Electron Energy  " * L"E_e" * " [ MeV ]"
+        label  = L"E_e" * " [GeV]"
         mass   = me
-        factor = 1.e-6
+        factor = 1.e-9
     else
         error("CR_type must be either 'p' or 'e'!")
     end

@@ -153,6 +153,9 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
             if !isnothing(cutoffs)
                 map[map.<cutoffs[col]] .= cutoffs[col]
+                map[isnan.(map)] .= cutoffs[col]
+                map[isinf.(map)] .= cutoffs[col]
+
             end
 
             if colorbar_mode == "single"
@@ -170,11 +173,11 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 # get colormap object
                 cmap = plt.get_cmap(im_cmap[selected])
                 # set invalid pixels to minimum
-                if im_cmap[selected][end-1:end] == "_r"
+                # if im_cmap[selected][end-1:end] == "_r"
+                #     cmap.set_bad(cmap(vmin_arr[selected]))
+                # else
                     cmap.set_bad(cmap(vmin_arr[selected]))
-                else
-                    cmap.set_bad(cmap(vmin_arr[selected]))
-                end
+                #end
             end
 
             if log_map[selected]
@@ -212,6 +215,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             end
 
             if streamlines[selected]
+                @info "streamlines"
                 image_name = streamline_files[Nfile]
                 vx, par, snap_num, units = read_fits_image(image_name)
                 image_name = streamline_files[Nfile+1]
@@ -221,10 +225,12 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                 y_grid = collect(1:par.Npixels[1])
 
                 ax.streamplot(x_grid, y_grid,
-                    vx, vy,
-                    density = 2,
-                    color = "white"
-                )
+                    vy, vx,
+                    density = 8,
+                    color=(209 / 255, 209 / 255, 224 / 255, 0.7),
+                    arrowsize = 0,
+                    linewidth = 0.5
+                    )
 
                 Ncontour += 1
             end
@@ -302,7 +308,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             ax.set_axis_off()
 
             # add colorbar
-            if row == 1 || ((row == Nrows))
+            if ((row == 1) && ( (colorbar_mode == "single") || (colorbar_mode == "top"))) || 
+                ((col == Ncols) && (colorbar_mode == "right"))
 
                 if colorbar_mode == "single"
                     if !(row == 1 || ((row == Nrows) && colorbar_bottom))
@@ -316,10 +323,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     cb = colorbar(im, cax = cax, orientation = colorbar_orientation)
                     
                     #println("shifting labels")
-                    if shift_colorbar_labels_inward[col]
-                        shift_colorbar_label!(cax, "left")
-                        shift_colorbar_label!(cax, "right")
-                    end
+                    # if shift_colorbar_labels_inward[col]
+                    #     shift_colorbar_label!(cax, "left")
+                    #     shift_colorbar_label!(cax, "right")
+                    # end
                     # if shift_colorbar_labels_inward[col]
                     #     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "t")
                     #     shift_colorbar_label!(grid[(col-1)*Nrows+1].cax, "b")
@@ -330,7 +337,7 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
 
                 cb_ticks_styling!(cb, color=ticks_color)
 
-                if log_map[selected]
+                if log_map[selected] && colorbar_location != "right"
                     locmin = plt.LogLocator(base=10.0, subs=(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks=20)
                     cb.ax.xaxis.set_minor_locator(locmin)
                     cb.ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
@@ -339,12 +346,18 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     cb.ax.xaxis.set_major_locator(locmaj)
                 end
 
-                if colorbar_location == "top"
-                    grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
-                    grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
-                end
+                # if colorbar_location == "top"
+                #     grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
+                #     grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
+                #     cax.xaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
+                # end
 
-                cax.xaxis.set_label_coords(0.5, 2.0+cb_label_offset)
+                # if colorbar_location == "right"
+                #     grid[(col-1)*Nrows+1].cax.yaxis.set_ticks_position("right")
+                #     grid[(col-1)*Nrows+1].cax.yaxis.set_label_position("right")
+                #     #cax.yaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
+                # end
+
             end
 
             # count up file

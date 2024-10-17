@@ -73,6 +73,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                                 N_ticks = zeros(Int64, 2Ncols),
                                 annotation_color = "w",
                                 dpi=400,
+                                cb_label_offset=0.0,
                                 overplotting_functions=nothing
                             )
 
@@ -82,7 +83,7 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
         legend_font_size = 7
     elseif Ncols == 3
         aspect_ratio = 1.42
-        axis_label_font_size=8
+        axis_label_font_size=10
         legend_font_size=5
     elseif Ncols == 4
         aspect_ratio = 1.89
@@ -286,7 +287,12 @@ function propaganda_plot_double_row(Ncols, files, im_cmap, cb_labels, vmin_arr, 
                 shift_colorbar_label!(cb.ax, "left")
                 shift_colorbar_label!(cb.ax, "right")
             end
-            
+            if loc == "top"
+                cb.ax.xaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
+            else
+                cb.ax.xaxis.set_label_coords(0.5, -cb_label_offset - 0.5)
+            end
+
 
             # count up file
             Nfile += 1

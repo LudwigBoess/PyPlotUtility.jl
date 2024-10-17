@@ -165,7 +165,7 @@ If a `count_quantity` is provided it computes the mean of said quantity within t
 If `calc_sigma` is set to `true` it will also return the standard deviation of the quantity per bin.
 """
 function bin_1D_log(bin_quantity, bin_lim, count_quantity=nothing; 
-                    calc_sigma::Bool=true, calc_mean::Bool=false, 
+                    calc_sigma::Bool=false, calc_mean::Bool=false,
                     Nbins::Int=100,
                     show_progress::Bool=true)
 
@@ -203,7 +203,7 @@ If a `count_quantity` is provided it computes the mean of said quantity in ``log
 If `calc_sigma` is set to `true` it will also return the standard deviation of the quantity per bin.
 """
 function bin_1D_loglog(bin_quantity, bin_lim, count_quantity; 
-                    calc_sigma::Bool=true, Nbins::Int=100,
+                    calc_sigma::Bool=false, Nbins::Int=100,
                     show_progress::Bool=true)
 
     return bin_1D(log10.(bin_quantity), log10.(bin_lim), log10.(count_quantity); 

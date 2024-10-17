@@ -1,7 +1,6 @@
 using Healpix
 using Unitful, UnitfulAstro
 
-
 """
     plot_single_allsky( filename::String, 
                         im_cmap, cb_label::AbstractString, clim::Vector{<:Real}, 
@@ -36,15 +35,17 @@ function plot_single_allsky(filename::String,
                             smooth_image::Bool=false,
                             smooth_size::Real=2.0,
                             contour_file=nothing,
-                            contour_levels::Vector{<:Real}=[0.5, 1.0],
+                            contour_levels::Vector{<:Real}=[0.8, 1.0],
                             contour_color::String="w",
                             contour_alpha::Real=0.8,
                             contour_linestyle::String="dotted",
                             annotations=nothing,
                             dpi=400,
                             per_sr::Bool=false,
+                            overplot_function=nothing,
                             origin="lower")
 
+    PE = pyimport("matplotlib.patheffects")
 
     # read healpix image
     m = Healpix.readMapFromFITS(filename, 1, Float64)
@@ -128,9 +129,14 @@ function plot_single_allsky(filename::String,
     # add annotations for cluster names 
     if !isnothing(annotations)
         for ann ∈ annotations
-            txt = ax.text(ann.xpix, ann.ypix, ann.name, color=contour_color, fontsize=10)
-            #txt.set_path_effects([PE.withStroke(linewidth=1, foreground="k")])
+            txt = ax.text(ann.xpix, ann.ypix, ann.name, color="k", fontsize=15)
+            txt.set_path_effects([PE.withStroke(linewidth=1.5, foreground="w")])
         end
+    end
+
+    # overplot function
+    if !isnothing(overplot_function)
+        ax = overplot_function(ax)
     end
 
     if annotate_time
@@ -245,7 +251,7 @@ function plot_multiple_allsky(filenames::Vector{String},
     plot_styling!(upscale * 300, axis_label_font_size=12, 
                 legend_font_size=5, color=ticks_color)
     gs = plt.GridSpec(1 + Nrows, 4*Ncols, figure=fig,
-        height_ratios=height_ratios, hspace=0.05, wspace=0.0 )
+        height_ratios=height_ratios, hspace=0.02, wspace=0.01 )
 
 
     Nfile = 1
@@ -383,6 +389,13 @@ function plot_multiple_allsky(filenames::Vector{String},
     cb.ax.xaxis.set_label_position("top")
 
     cb.ax.xaxis.set_label_coords(0.5, 2.8)
+
+    locmin = plt.LogLocator(base=10.0, subs=(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9), numticks=20)
+    cb.ax.xaxis.set_minor_locator(locmin)
+    cb.ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+    locmaj = matplotlib.ticker.LogLocator(base=10, numticks=12)
+    cb.ax.xaxis.set_major_locator(locmaj)
 
     subplots_adjust(hspace=0.0, wspace=0.0)
 

@@ -32,11 +32,12 @@ function get_colorbar_top(ax::PyCall.PyObject, im::PyCall.PyObject,
         labelsize = tick_label_size,
         size = 3, width = 1
     )
+    cb.ax.minorticks_on()
 
     cax.xaxis.set_ticks_position("top")
     cax.xaxis.set_label_position("top")
 
-    #cax.xaxis.set_major_locator(PyPlot.MaxNLocator(3))
+    #cax.xaxis.set_major_locator(PyPlot.MaxNLocator(10))
 
     return cax
 end

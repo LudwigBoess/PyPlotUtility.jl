@@ -308,8 +308,8 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
             ax.set_axis_off()
 
             # add colorbar
-            if ((row == 1) && ( (colorbar_mode == "single") || (colorbar_mode == "top"))) || 
-                ((col == Ncols) && (colorbar_mode == "right"))
+            if ((row == 1) && ((colorbar_location == "single") || (colorbar_location == "top"))) ||
+               ((col == Ncols) && (colorbar_location == "right"))
 
                 if colorbar_mode == "single"
                     if !(row == 1 || ((row == Nrows) && colorbar_bottom))
@@ -320,9 +320,10 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     cb = colorbar(im, cax=cax, orientation=colorbar_orientation)
                 else
                     cax = grid[(col-1)*Nrows+1].cax
-                    cb = colorbar(im, cax = cax, orientation = colorbar_orientation)
+                    cb = colorbar(im, cax = cax, 
+                                    orientation = colorbar_orientation)
                     
-                    #println("shifting labels")
+                    # println("shifting labels")
                     # if shift_colorbar_labels_inward[col]
                     #     shift_colorbar_label!(cax, "left")
                     #     shift_colorbar_label!(cax, "right")
@@ -346,17 +347,17 @@ function plot_image_grid(Nrows, Ncols, files, im_cmap, cb_labels, vmin_arr, vmax
                     cb.ax.xaxis.set_major_locator(locmaj)
                 end
 
-                # if colorbar_location == "top"
-                #     grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
-                #     grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
-                #     cax.xaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
-                # end
+                if colorbar_location == "top"
+                    grid[(col-1)*Nrows+1].cax.xaxis.set_ticks_position("top")
+                    grid[(col-1)*Nrows+1].cax.xaxis.set_label_position("top")
+                    cax.xaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
+                end
 
-                # if colorbar_location == "right"
-                #     grid[(col-1)*Nrows+1].cax.yaxis.set_ticks_position("right")
-                #     grid[(col-1)*Nrows+1].cax.yaxis.set_label_position("right")
-                #     #cax.yaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
-                # end
+                if colorbar_location == "right"
+                    grid[(col-1)*Nrows+1].cax.yaxis.set_ticks_position("right")
+                    grid[(col-1)*Nrows+1].cax.yaxis.set_label_position("right")
+                    #cax.yaxis.set_label_coords(0.5, 2.0 + cb_label_offset)
+                end
 
             end
 

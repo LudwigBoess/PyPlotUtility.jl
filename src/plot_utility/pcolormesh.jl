@@ -56,7 +56,7 @@ If `c_lim` is not defined the colorbar is limited by minimum and maximum of the 
 - `set_bad::Bool=true`: Whether to set invalid pixels to a different color.
 - `bad_color::String="white"`: Color to use if `set_bad=true`.
 """
-function get_pcolormesh(map, x_lim, y_lim, c_lim=nothing; 
+function get_pcolormesh(map, x_lim, y_lim; 
                         image_cmap="plasma", cnorm=matplotlib.colors.LogNorm(),
                         set_bad::Bool=true, bad_color::String="white")
 
@@ -71,14 +71,9 @@ function get_pcolormesh(map, x_lim, y_lim, c_lim=nothing;
         cmap.set_bad(bad_color)
     end
 
-    # if no colorbar limits are set -> use minmax
-    if isnothing(c_lim)
-        c_lim = [minimum(map), maximum(map)]
-    end
-
     # plot pcolormesh
     im1 = pcolormesh(X, Y, map, 
-                     cmap=image_cmap, vmin=c_lim[1], vmax=c_lim[2], 
+                     cmap=image_cmap,
                      norm=cnorm)
 
     return im1

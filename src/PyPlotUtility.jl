@@ -18,6 +18,7 @@ module PyPlotUtility
     include(joinpath("plot_utility", "pcolormesh.jl"))
     include(joinpath("plot_utility", "plot_styling.jl"))
     include(joinpath("plot_utility", "streamlines.jl"))
+    include(joinpath("plot_utility", "arrows.jl"))
     include(joinpath("plot_utility", "secondary_axis.jl"))
     include(joinpath("plot_utility", "allsky.jl"))
     include(joinpath("plot_utility", "image_grid", "utility.jl"))
@@ -39,7 +40,7 @@ module PyPlotUtility
             get_colorbar_left,
             get_colorbar_right,
             shift_colorbar_label!,
-            get_streamlines,
+            get_streamlines, get_arrows,
             bin_1D, bin_1D!, bin_1D_log, bin_1D_log!, bin_1D_quantity!, bin_1D_quantity_log!,
             bin_2D, bin_2D!, bin_2D_log, bin_2D_log!, bin_2D_quantity!, bin_2D_quantity_log!,
             propaganda_plot_columns,
